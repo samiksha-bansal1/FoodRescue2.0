@@ -1,0 +1,1340 @@
+FoodRescue Full-Stack Web Application - Development Prompt for Windsurf
+Project Brief
+Build a production-ready FoodRescue platform - an AI-powered web application connecting food donors (restaurants/stores) with NGOs and volunteers to redistribute surplus food. Create a modern, aesthetically stunning platform with smooth animations, professional UI/UX, and comprehensive functionality.
+
+Tech Stack
+Frontend
+React.js 18+ (functional components, hooks)
+React Router v6
+Axios
+Framer Motion (animations)
+Tailwind CSS (styling)
+Recharts (data visualization)
+React-Leaflet (maps)
+React Hot Toast (notifications)
+Lucide React (icons)
+React Hook Form + Zod (validation)
+Context API + useReducer (state)
+Socket.io-client (real-time)
+Backend
+Node.js + Express.js
+MongoDB + Mongoose
+JWT + Bcrypt
+Multer + Cloudinary (images)
+Socket.io (real-time)
+Nodemailer (emails)
+Node-cron (scheduled tasks)
+AI Service
+Python Flask microservice
+scikit-learn (ML models)
+pandas (data processing)
+
+Color Scheme & Design System
+/* Primary Colors */
+--primary-green: #10B981 (emerald - growth, sustainability)
+--primary-dark: #059669 (hover states)
+--primary-light: #D1FAE5 (backgrounds)
+
+/* Accent Colors */
+--accent-orange: #F59E0B (urgency, warmth)
+--accent-red: #EF4444 (critical alerts)
+--accent-blue: #3B82F6 (in-transit status)
+
+/* Neutrals */
+--neutral-50: #F9FAFB (background)
+--neutral-100: #F3F4F6 (cards)
+--neutral-200: #E5E7EB (borders)
+--neutral-600: #4B5563 (secondary text)
+--neutral-900: #111827 (headings)
+
+/* Status Colors */
+--success: #10B981
+--warning: #F59E0B
+--error: #EF4444
+--info: #3B82F6
+
+Typography: Inter font (Bold 700 for headings, Regular 400 for body, Medium 500 for captions)
+Design Principles:
+Clean, minimalist aesthetic
+Card-based layouts with subtle shadows
+Generous white space
+Rounded corners (12px cards, 8px buttons)
+Smooth transitions (300ms ease-in-out)
+Glass-morphism effects for modals
+Micro-interactions on all interactive elements
+
+Complete File Structure
+foodrescue/
+│
+├── frontend/
+│   ├── public/
+│   │   ├── index.html
+│   │   ├── favicon.ico
+│   │   └── images/
+│   │
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── index.jsx
+│   │   ├── index.css
+│   │   │
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   ├── Footer.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   ├── Button.jsx
+│   │   │   │   ├── Card.jsx
+│   │   │   │   ├── Modal.jsx
+│   │   │   │   ├── LoadingSpinner.jsx
+│   │   │   │   ├── ProtectedRoute.jsx
+│   │   │   │   ├── StatusBadge.jsx
+│   │   │   │   ├── SearchBar.jsx
+│   │   │   │   ├── Pagination.jsx
+│   │   │   │   └── ConfirmDialog.jsx
+│   │   │   │
+│   │   │   ├── auth/
+│   │   │   │   ├── LoginForm.jsx
+│   │   │   │   ├── RegisterForm.jsx
+│   │   │   │   ├── RoleSelector.jsx
+│   │   │   │   └── ForgotPassword.jsx
+│   │   │   │
+│   │   │   ├── donor/
+│   │   │   │   ├── DonationUploadForm.jsx
+│   │   │   │   ├── DonationCard.jsx
+│   │   │   │   ├── DonationList.jsx
+│   │   │   │   ├── DonationTracker.jsx
+│   │   │   │   ├── ImpactDashboard.jsx
+│   │   │   │   ├── ImpactChart.jsx
+│   │   │   │   ├── RatingModal.jsx
+│   │   │   │   └── ImageUploader.jsx
+│   │   │   │
+│   │   │   ├── ngo/
+│   │   │   │   ├── DonationBrowser.jsx
+│   │   │   │   ├── DonationDetailsModal.jsx
+│   │   │   │   ├── AcceptRejectButtons.jsx
+│   │   │   │   ├── NGODashboard.jsx
+│   │   │   │   ├── ReceivedDonationsList.jsx
+│   │   │   │   └── MapView.jsx
+│   │   │   │
+│   │   │   ├── volunteer/
+│   │   │   │   ├── TaskList.jsx
+│   │   │   │   ├── TaskCard.jsx
+│   │   │   │   ├── DeliveryMap.jsx
+│   │   │   │   ├── StatusUpdateButtons.jsx
+│   │   │   │   └── NavigationView.jsx
+│   │   │   │
+│   │   │   ├── admin/
+│   │   │   │   ├── AdminDashboard.jsx
+│   │   │   │   ├── UserManagementTable.jsx
+│   │   │   │   ├── UserVerificationQueue.jsx
+│   │   │   │   ├── AnalyticsCharts.jsx
+│   │   │   │   ├── SystemMetrics.jsx
+│   │   │   │   └── AuditLogViewer.jsx
+│   │   │   │
+│   │   │   └── shared/
+│   │   │       ├── NotificationBell.jsx
+│   │   │       ├── NotificationList.jsx
+│   │   │       ├── ProfileDropdown.jsx
+│   │   │       ├── StatsCard.jsx
+│   │   │       ├── Timeline.jsx
+│   │   │       └── EmptyState.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Landing.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── DonorDashboard.jsx
+│   │   │   ├── NGODashboard.jsx
+│   │   │   ├── VolunteerDashboard.jsx
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── Settings.jsx
+│   │   │   ├── Help.jsx
+│   │   │   ├── NotFound.jsx
+│   │   │   └── Unauthorized.jsx
+│   │   │
+│   │   ├── context/
+│   │   │   ├── AuthContext.jsx
+│   │   │   ├── NotificationContext.jsx
+│   │   │   └── ThemeContext.jsx
+│   │   │
+│   │   ├── hooks/
+│   │   │   ├── useAuth.js
+│   │   │   ├── useNotifications.js
+│   │   │   ├── useDonations.js
+│   │   │   ├── useGeolocation.js
+│   │   │   └── useDebounce.js
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   ├── authService.js
+│   │   │   ├── donationService.js
+│   │   │   ├── ngoService.js
+│   │   │   ├── volunteerService.js
+│   │   │   ├── adminService.js
+│   │   │   ├── uploadService.js
+│   │   │   └── socketService.js
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── constants.js
+│   │   │   ├── validation.js
+│   │   │   ├── formatters.js
+│   │   │   ├── statusHelpers.js
+│   │   │   └── errorHandler.js
+│   │   │
+│   │   └── animations/
+│   │       ├── pageTransitions.js
+│   │       ├── cardAnimations.js
+│   │       └── variants.js
+│   │
+│   ├── tailwind.config.js
+│   ├── package.json
+│   └── .env
+│
+├── backend/
+│   ├── src/
+│   │   ├── server.js
+│   │   ├── app.js
+│   │   │
+│   │   ├── config/
+│   │   │   ├── database.js
+│   │   │   ├── cloudinary.js
+│   │   │   ├── email.js
+│   │   │   └── constants.js
+│   │   │
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   ├── Donation.js
+│   │   │   ├── NGO.js
+│   │   │   ├── VolunteerTask.js
+│   │   │   ├── Rating.js
+│   │   │   ├── Notification.js
+│   │   │   └── AuditLog.js
+│   │   │
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   ├── donorController.js
+│   │   │   ├── ngoController.js
+│   │   │   ├── volunteerController.js
+│   │   │   ├── adminController.js
+│   │   │   ├── donationController.js
+│   │   │   ├── notificationController.js
+│   │   │   └── analyticsController.js
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── index.js
+│   │   │   ├── authRoutes.js
+│   │   │   ├── donorRoutes.js
+│   │   │   ├── ngoRoutes.js
+│   │   │   ├── volunteerRoutes.js
+│   │   │   ├── adminRoutes.js
+│   │   │   ├── donationRoutes.js
+│   │   │   └── uploadRoutes.js
+│   │   │
+│   │   ├── middleware/
+│   │   │   ├── authMiddleware.js
+│   │   │   ├── roleMiddleware.js
+│   │   │   ├── uploadMiddleware.js
+│   │   │   ├── validationMiddleware.js
+│   │   │   ├── errorHandler.js
+│   │   │   ├── rateLimiter.js
+│   │   │   └── logger.js
+│   │   │
+│   │   ├── services/
+│   │   │   ├── emailService.js
+│   │   │   ├── matchingService.js
+│   │   │   ├── notificationService.js
+│   │   │   ├── analyticsService.js
+│   │   │   └── imageService.js
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── helpers.js
+│   │   │   ├── validators.js
+│   │   │   ├── dateUtils.js
+│   │   │   └── constants.js
+│   │   │
+│   │   ├── sockets/
+│   │   │   ├── socketHandlers.js
+│   │   │   └── socketEvents.js
+│   │   │
+│   │   └── jobs/
+│   │       ├── matchingJob.js
+│   │       ├── expiryCheckJob.js
+│   │       └── cleanupJob.js
+│   │
+│   ├── uploads/
+│   ├── logs/
+│   ├── package.json
+│   ├── .env
+│   └── .env.example
+│
+├── ai-service/
+│   ├── app.py
+│   ├── model/
+│   │   ├── urgency_predictor.py
+│   │   ├── matching_algorithm.py
+│   │   ├── train_model.py
+│   │   └── saved_models/
+│   ├── utils/
+│   │   ├── data_processor.py
+│   │   └── feature_engineering.py
+│   ├── requirements.txt
+│   └── .env
+│
+└── README.md
+
+
+Core Features & Components
+1. Landing Page
+Requirements:
+Full-screen hero section with gradient background (emerald green)
+Animated illustration showing food donation flow
+Floating food icons with parallax scroll effect
+Statistics counter animation (meals delivered, waste reduced)
+CTA buttons: "Donate Food" and "Receive Donations"
+Features section with icon cards (hover lift animation)
+Testimonials carousel with auto-scroll
+"How It Works" timeline with step animations
+Responsive footer with links
+Animations:
+Fade-in on scroll for sections
+Count-up animation for statistics
+Parallax effect on hero background
+Smooth scroll to sections
+
+2. Authentication System
+Login Page:
+Split-screen layout (form left, gradient illustration right)
+Email and password fields with validation
+"Remember me" checkbox
+"Forgot Password" link
+Social login buttons (Google, Facebook - UI only)
+Toast notifications for errors/success
+Redirect to role-specific dashboard after login
+Register Page:
+Role selection cards (Donor, NGO, Volunteer) with icons
+Multi-step form based on selected role
+Common fields: Full Name, Email, Password, Confirm Password, Phone
+Donor fields: Restaurant/Store Name, Address, Business License (optional)
+NGO fields: Organization Name, Registration Number, Address, Charitable Status Document
+Volunteer fields: Vehicle Type, Availability Schedule
+Password strength indicator
+Terms & conditions checkbox
+Form validation with inline error messages
+Account pending verification message after registration
+Forgot Password:
+Email input with validation
+Send reset link button
+Confirmation message
+Reset password page with token validation
+
+3. Donor Dashboard
+Layout:
+Collapsible sidebar with menu items:
+Dashboard (home icon)
+Upload Donation (plus icon)
+My Donations (package icon)
+Impact Report (chart icon)
+Profile (user icon)
+Settings (gear icon)
+Top navigation bar:
+Logo (left)
+Search bar (center)
+Notification bell with badge (right)
+Profile dropdown (right)
+Dashboard Home:
+Stats Cards Grid (4 cards):
+Total Donations (count + percentage change)
+Meals Provided (count)
+Food Saved in kg (count)
+Impact Score (calculated metric)
+Each card with icon, animated counter, and subtle hover effect
+Recent Donations List:
+Card view showing last 5 donations
+Each card: thumbnail, name, status badge, date, actions
+Impact Chart:
+Line chart showing donations over last 30 days
+Interactive tooltips
+Upload Donation Form:
+Modal or dedicated page with sections:
+Food Details:
+Category dropdown (Cooked Meals, Bakery, Dairy, Vegetables, Fruits, Packaged Food)
+Food name input
+Quantity (number + unit dropdown: kg, pieces, servings)
+Preparation/Packaging datetime picker
+Best before/expiry datetime picker
+Urgency indicator (auto-calculated, color-coded)
+Additional Info:
+Special instructions textarea (max 500 chars)
+Dietary info checkboxes (Vegetarian, Vegan, Contains Nuts, Gluten-free)
+Images:
+Drag-and-drop zone for up to 3 images
+Preview thumbnails with remove button
+Auto-compress before upload
+Location:
+Auto-detect location button
+Manual address input with autocomplete
+Map preview showing location pin
+Submit button (disabled during upload, loading spinner)
+Success modal with donation ID and tracking link
+My Donations Page:
+Toggle view: Cards / Table
+Filters: Status, Date Range, Category
+Sort: Newest, Oldest, Most Urgent
+Donation Cards showing:
+Food image (placeholder if none)
+Food name and category icon
+Quantity
+Status badge (color-coded):
+Pending Match (gray)
+Matched (blue)
+Accepted (orange)
+In Transit (purple)
+Delivered (green)
+Cancelled (red)
+Urgency indicator (red/orange/green dot)
+Matched NGO name (if applicable)
+Volunteer name (if assigned)
+Timeline progress bar
+Actions dropdown: View Details, Track, Cancel (if pending)
+Donation Details Modal:
+Full image gallery carousel
+All donation information
+Status timeline with timestamps
+NGO and volunteer details
+Location map
+Contact buttons
+Rate NGO button (if delivered)
+Impact Report Page:
+Date range selector
+Key Metrics Cards:
+Total meals provided
+CO2 emissions saved
+Number of NGOs helped
+Total donations
+Charts:
+Donations over time (line chart)
+Food category distribution (pie chart)
+Monthly comparison (bar chart)
+Download report button (PDF)
+Rating Modal:
+Star rating (1-5)
+Comment textarea
+Submit and cancel buttons
+Thank you message after submission
+
+4. NGO Dashboard
+Dashboard Home:
+Stats Cards:
+Available Donations (count)
+Accepted Donations (count)
+Total Meals Received (count)
+Active Volunteers (count)
+Map View:
+Shows nearby available donations as markers
+Click marker to view details
+Filter by distance radius slider
+Browse Donations Page:
+Filters Sidebar:
+Distance radius slider (5km to 40km)
+Food category multi-select
+Urgency level (High, Medium, Low)
+Quantity range
+Sort by: Nearest, Most Urgent, Largest Quantity, Newest
+Donation Cards Grid:
+Food image
+Urgency badge (red/orange/green with pulse animation for high)
+Food name and category
+Distance and direction icon
+Expiry countdown timer
+Quantity
+Donor name and rating stars
+View Details button
+Donation Details Modal:
+Image gallery
+Complete food information
+Donor details with contact button
+Location on map with route preview
+Estimated pickup time
+Special instructions
+Accept and Reject buttons (large, prominent)
+Confirmation dialog for both actions
+My Donations Page:
+Tabs: Accepted, In Transit, Delivered, History
+Accepted Tab:
+Donations waiting for volunteer
+Volunteer assigned status
+Contact volunteer button
+Cancel acceptance option (with reason)
+In Transit Tab:
+Real-time tracking on map
+Volunteer location updates
+ETA display
+Contact volunteer button
+Delivered Tab:
+Donations delivered but not confirmed
+"Mark as Delivered" button (opens confirmation with photo upload option)
+Rate volunteer option
+History Tab:
+All completed donations
+Statistics and filters
+
+5. Volunteer Dashboard
+Dashboard Home:
+Stats Cards:
+Available Tasks (count)
+Active Deliveries (count)
+Completed Tasks (count)
+Total Distance (km)
+Available Tasks Map:
+Shows all pickup/delivery locations
+Cluster markers for nearby tasks
+Filter by distance
+Available Tasks Page:
+List and map view toggle
+Task Cards:
+Pickup location (restaurant name, address)
+Delivery location (NGO name, address)
+Distance and estimated time
+Food summary
+Urgency badge
+Payment/incentive info (if any)
+Accept Task button
+Active Task Page:
+Full-screen map with:
+Pickup marker (red pin with restaurant icon)
+Delivery marker (green pin with NGO icon)
+Route polyline (blue)
+Volunteer current location (blue dot, updates every 30s)
+Navigation button (opens in Google Maps app)
+Bottom Sheet Panel:
+Collapsible, draggable
+Task details summary
+Step-by-step instructions
+Contact buttons (call donor, call NGO)
+Status Update Buttons:
+"Picked Up from Donor" (timestamp recorded, photo upload)
+"In Transit" (auto or manual)
+"Delivered to NGO" (photo upload, signature capture)
+Cancel task (with reason)
+Task History:
+Timeline view of completed deliveries
+Ratings received from NGOs
+Total earnings (if applicable)
+Statistics (on-time rate, completion rate)
+
+6. Admin Dashboard
+Dashboard Home:
+Large Stats Cards:
+Total Users (breakdown: donors, NGOs, volunteers)
+Total Donations (this month vs last month)
+Active Deliveries (real-time count)
+Success Rate (percentage)
+Charts Section:
+Daily donation trends (area chart)
+User growth (line chart)
+Food category distribution (donut chart)
+Geographic heatmap (donations by city/region)
+User Verification Queue:
+Table with pending registrations:
+User name
+Role
+Email
+Registration date
+Documents (view button)
+Actions:
+View details button (opens modal with all info)
+Approve button (green, sends activation email)
+Reject button (red, with reason textarea)
+Bulk actions: Approve all, Reject selected
+User Management:
+Searchable/filterable table:
+All columns: Name, Email, Role, Status, Registration Date, Last Login
+Filters: Role, Status (Active, Suspended, Pending), Date Range
+Search by name/email
+Actions per user:
+View profile
+Edit details
+Suspend account (with reason)
+Delete account (confirmation required)
+Bulk actions available
+Analytics Page:
+Comprehensive dashboard with multiple charts:
+Donation volume trends
+Peak hours heatmap
+NGO response times
+Volunteer performance metrics
+Food waste reduction calculations
+User retention rates
+Export data button (CSV/Excel)
+Audit Logs:
+Filterable table:
+Timestamp
+User
+Action (login, donation created, status changed, etc.)
+Details
+IP address
+Severity (info, warning, error)
+Filters: Date range, user, action type, severity
+Export logs button
+
+7. Shared Components
+Notification Bell:
+Icon with badge showing unread count
+Pulse animation for new notifications
+Dropdown panel on click:
+List of recent notifications (last 10)
+Each notification: icon, message, time ago, mark as read button
+See all button (goes to notifications page)
+Mark all as read button
+Notification Types:
+Donation matched (NGO)
+Donation accepted (Donor)
+Volunteer assigned (Donor & NGO)
+Status updated (all parties)
+Donation delivered (Donor & NGO)
+New rating received (NGO)
+Account verified (new user)
+Profile Dropdown:
+User avatar and name
+Role badge
+Menu items:
+View Profile
+Settings
+Help & Support
+Logout
+Smooth dropdown animation
+Status Badge:
+Reusable component with color variants:
+Pending (gray)
+Matched (blue)
+Accepted (orange)
+In Transit (purple)
+Delivered (green)
+Cancelled (red)
+High Urgency (red with pulse)
+Medium Urgency (orange)
+Low Urgency (green)
+Stats Card:
+Icon (customizable)
+Label
+Large value (with count-up animation on mount)
+Change indicator (e.g., "+12% from last month" in green/red)
+Optional mini chart sparkline
+Hover effect (slight lift and shadow)
+Empty State:
+Illustration (relevant to context)
+Heading message
+Subtext
+Call-to-action button
+Used when: no donations, no tasks, no notifications, etc.
+Confirm Dialog:
+Modal overlay with blur background
+Title
+Description/warning message
+Two buttons: Confirm (primary), Cancel (secondary)
+Optional input field (for reasons, etc.)
+Loading Spinner:
+Full-page overlay with semi-transparent background
+Animated spinner (custom design with logo)
+Optional loading message
+Toast Notifications:
+Top-right corner
+Auto-dismiss after 5 seconds
+Types: Success (green), Error (red), Warning (orange), Info (blue)
+Icon + message
+Close button
+Slide-in animation
+
+8. Real-Time Features (Socket.io)
+Events to implement:
+Client emits:
+join_room (user ID, role)
+volunteer_location_update (task ID, lat, lng)
+Server emits to client:
+new_notification (notification object)
+donation_matched (donation ID, NGO ID)
+donation_accepted (donation ID)
+volunteer_assigned (task ID, volunteer info)
+status_updated (donation ID, new status, timestamp)
+volunteer_location (lat, lng, ETA)
+delivery_completed (donation ID)
+Implementation:
+Connect to socket on app mount
+Join room based on user ID
+Listen for events and update state/UI
+Emit location updates for volunteers (every 30s while active)
+Show toast notification for important events
+Update notification bell badge
+
+9. Map Integration (React-Leaflet)
+Features needed:
+Display user location marker
+Display donation/NGO markers with custom icons
+Cluster markers when zoomed out
+Click marker to show popup with basic info
+Draw route polyline between two points
+Show direction arrows on route
+Current location tracking (for volunteers)
+Distance and ETA calculation display
+Zoom to fit bounds of all markers
+Satellite/street view toggle
+Custom Marker Icons:
+Restaurant (red fork/knife icon)
+NGO (green heart icon)
+Volunteer (blue person icon)
+Urgency indicator (ring around marker)
+
+10. Animations & Transitions
+Page Transitions:
+Fade + slide animation when changing routes
+Use Framer Motion's AnimatePresence
+Card Animations:
+Fade-in with stagger when loading lists
+Hover: lift up slightly + shadow increase
+Click/tap: scale down 0.95
+Button Animations:
+Hover: scale 1.05 + slight shadow
+Active/tap: scale 0.95
+Loading: spinner inside button + disabled state
+Form Animations:
+Error shake on validation fail
+Success checkmark animation
+Smooth height transitions when showing/hiding fields
+Notification Animations:
+Slide in from top-right
+Fade out on dismiss
+Shake on error notification
+Stats Counter Animation:
+Count up from 0 to target value on mount/scroll into view
+Duration based on value magnitude
+Skeleton Loaders:
+Pulse animation for loading states
+Matches layout of actual content
+Micro-interactions:
+Ripple effect on button clicks
+Smooth checkbox/radio animations
+Toggle switch slide animation
+Progress bar fill animation
+
+Database Schema (MongoDB)
+User Model
+{
+  _id: ObjectId,
+  fullName: String,
+  email: String (unique, indexed),
+  password: String (hashed),
+  role: Enum ['donor', 'ngo', 'volunteer', 'admin'],
+  phone: String,
+  isVerified: Boolean (default: false),
+  isActive: Boolean (default: true),
+  
+  // Role-specific fields
+  donorProfile: {
+    businessName: String,
+    businessType: String,
+    address: Object {street, city, state, pincode, coordinates: [lng, lat]},
+    businessLicense: String
+  },
+  
+  ngoProfile: {
+    organizationName: String,
+    registrationNumber: String,
+    address: Object,
+    charitableStatus: String,
+    capacity: Number,
+    acceptedCategories: [String],
+    rating: Number (calculated average)
+  },
+  
+  volunteerProfile: {
+    vehicleType: String,
+    availability: [String],
+    currentLocation: Object {coordinates: [lng, lat]},
+    rating: Number,
+    completedTasks: Number,
+    onTimeRate: Number
+  },
+  
+  createdAt: Date,
+  updatedAt: Date,
+  lastLogin: Date
+}
+
+Donation Model
+{
+  _id: ObjectId,
+  donationId: String (unique, e.g., "DN-20241121-0001"),
+  donor: ObjectId (ref: User),
+  
+  foodDetails: {
+    category: String,
+    name: String,
+    quantity: Number,
+    unit: String,
+    preparationTime: Date,
+    expiryTime: Date,
+    shelfLifeHours: Number (calculated),
+    dietaryInfo: [String],
+    specialInstructions: String,
+    images: [String] (Cloudinary URLs)
+  },
+  
+  location: {
+    address: Object,
+    coordinates: [lng, lat] (indexed for geo queries)
+  },
+  
+  aiData: {
+    urgencyScore: Number (0-1),
+    urgencyCategory: Enum ['high', 'medium', 'low'],
+    perishabilityScore: Number
+  },
+  
+  status: Enum ['pending', 'matched', 'accepted', 'in_transit', 'delivered', 'cancelled'],
+  
+  matchedNGO: ObjectId (ref: User),
+  assignedVolunteer: ObjectId (ref: User),
+  
+  timeline: [{
+    status: String,
+    timestamp: Date,
+    updatedBy: ObjectId,
+    note: String
+  }],
+  
+  cancellationReason: String,
+  
+  createdAt: Date,
+  updatedAt: Date
+}
+
+VolunteerTask Model
+{
+  _id: ObjectId,
+  taskId: String (unique),
+  donation: ObjectId (ref: Donation),
+  volunteer: ObjectId (ref: User),
+  donor: ObjectId (ref: User),
+  ngo: ObjectId (ref: User),
+  
+  pickupLocation: Object {address, coordinates},
+  deliveryLocation: Object {address, coordinates},
+  
+  distance: Number (km),
+  estimatedTime: Number (minutes),
+  
+  status: Enum ['assigned', 'accepted', 'picked_up', 'in_transit', 'delivered', 'cancelled'],
+  
+  pickupTime: Date,
+  deliveryTime: Date,
+  
+  photos: {
+    pickupPhoto: String,
+    deliveryPhoto: String
+  },
+  
+  signature: String,
+  
+  timeline: [{
+    status: String,
+    timestamp: Date,
+    location: Object
+  }],
+  
+  createdAt: Date,
+  updatedAt: Date
+}
+
+Rating Model
+{
+  _id:
+{
+  _id: ObjectId,
+  donation: ObjectId (ref: Donation),
+  ratedBy: ObjectId (ref: User), // donor
+  ratedTo: ObjectId (ref: User), // NGO or volunteer
+  ratedType: Enum ['ngo', 'volunteer'],
+  
+  rating: Number (1-5),
+  comment: String,
+  
+  createdAt: Date
+}
+Notification Model
+{
+  _id: ObjectId,
+  recipient: ObjectId (ref: User),
+  type: Enum ['donation_matched', 'donation_accepted', 'volunteer_assigned', 
+               'status_updated', 'delivery_completed', 'new_rating', 
+               'account_verified', 'system_alert'],
+  
+  title: String,
+  message: String,
+  
+  relatedDonation: ObjectId (ref: Donation),
+  relatedUser: ObjectId (ref: User),
+  
+  isRead: Boolean (default: false),
+  
+  createdAt: Date
+}
+
+AuditLog Model
+{
+  _id: ObjectId,
+  user: ObjectId (ref: User),
+  action: String, // e.g., 'user_login', 'donation_created', 'status_updated'
+  details: Object, // flexible object for action-specific data
+  ipAddress: String,
+  userAgent: String,
+  severity: Enum ['info', 'warning', 'error'],
+  
+  createdAt: Date
+}
+
+
+Backend API Endpoints
+Authentication Routes (/api/auth)
+POST   /register                 // Register new user
+POST   /login                    // Login user
+POST   /logout                   // Logout user
+POST   /refresh-token            // Refresh JWT token
+POST   /forgot-password          // Send password reset email
+POST   /reset-password/:token    // Reset password with token
+GET    /verify-email/:token      // Verify email address
+GET    /me                       // Get current user profile
+
+Donor Routes (/api/donor)
+POST   /donations                // Upload new donation
+GET    /donations                // Get donor's donations (with filters)
+GET    /donations/:id            // Get specific donation details
+PUT    /donations/:id            // Update donation (if pending)
+DELETE /donations/:id            // Cancel donation
+GET    /donations/:id/track      // Get donation tracking info with timeline
+GET    /impact-report            // Get impact analytics
+POST   /ratings                  // Rate NGO after delivery
+PUT    /profile                  // Update donor profile
+
+NGO Routes (/api/ngo)
+GET    /donations/available      // Browse available donations (with filters, geo query)
+GET    /donations/:id            // Get donation details
+POST   /donations/:id/accept     // Accept donation
+POST   /donations/:id/reject     // Reject donation (with reason)
+GET    /donations/accepted       // Get accepted donations
+POST   /donations/:id/mark-delivered  // Mark donation as delivered
+GET    /statistics               // Get NGO statistics
+PUT    /profile                  // Update NGO profile
+GET    /ratings                  // Get received ratings
+
+Volunteer Routes (/api/volunteer)
+GET    /tasks/available          // Get available tasks (geo query)
+GET    /tasks/:id                // Get task details
+POST   /tasks/:id/accept         // Accept task
+PUT    /tasks/:id/status         // Update task status
+POST   /tasks/:id/upload-photo   // Upload pickup/delivery photo
+GET    /tasks/active             // Get active task
+GET    /tasks/history            // Get completed tasks
+PUT    /location                 // Update current location
+PUT    /profile                  // Update volunteer profile
+
+Admin Routes (/api/admin)
+GET    /users/pending            // Get pending user verifications
+POST   /users/:id/verify         // Verify/approve user
+POST   /users/:id/reject         // Reject user registration
+GET    /users                    // Get all users (with filters, pagination)
+GET    /users/:id                // Get user details
+PUT    /users/:id                // Update user details
+DELETE /users/:id                // Delete user
+POST   /users/:id/suspend        // Suspend user account
+POST   /users/:id/activate       // Activate suspended user
+GET    /analytics                // Get platform analytics
+GET    /audit-logs               // Get audit logs (with filters)
+GET    /dashboard-stats          // Get admin dashboard statistics
+
+Donation Routes (Shared) (/api/donations)
+GET    /                         // Get donations (role-based filtering)
+GET    /:id                      // Get donation details
+GET    /:id/timeline             // Get donation status timeline
+
+Upload Routes (/api/upload)
+POST   /image                    // Upload single image (Multer + Cloudinary)
+POST   /images                   // Upload multiple images
+DELETE /image/:publicId          // Delete image from Cloudinary
+
+Notification Routes (/api/notifications)
+GET    /                         // Get user's notifications (paginated)
+GET    /unread-count             // Get count of unread notifications
+PUT    /:id/read                 // Mark notification as read
+PUT    /mark-all-read            // Mark all as read
+DELETE /:id                      // Delete notification
+
+Analytics Routes (/api/analytics)
+GET    /donor/:userId            // Get donor analytics
+GET    /ngo/:userId              // Get NGO analytics
+GET    /volunteer/:userId        // Get volunteer analytics
+GET    /platform                 // Get platform-wide analytics (admin only)
+
+
+AI Service Endpoints (Python Flask)
+Base URL: http://localhost:5000/api/ai
+POST   /predict-urgency
+# Input: {food_type, quantity, shelf_life_hours, preparation_time}
+# Output: {urgency_score, urgency_category, priority_rank}
+
+POST   /match-donation
+# Input: {donation_id, donor_location, urgency_score, food_type, quantity}
+# Output: {matched_ngos: [{ngo_id, distance_km, capacity_match, overall_score}]}
+
+POST   /train-model
+# Retrain urgency prediction model with new data
+# Admin only
+
+GET    /model-info
+# Get current model version and accuracy metrics
+
+
+Environment Variables
+Frontend .env
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_SOCKET_URL=http://localhost:5000
+REACT_APP_AI_SERVICE_URL=http://localhost:5001/api/ai
+REACT_APP_GOOGLE_MAPS_API_KEY=your_key_here
+REACT_APP_CLOUDINARY_CLOUD_NAME=your_cloud_name
+REACT_APP_CLOUDINARY_UPLOAD_PRESET=your_preset
+
+Backend .env
+NODE_ENV=development
+PORT=5000
+
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/foodrescue
+MONGODB_TEST_URI=mongodb://localhost:27017/foodrescue_test
+
+# JWT
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRE=7d
+JWT_REFRESH_SECRET=your_refresh_secret
+JWT_REFRESH_EXPIRE=30d
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Email (Nodemailer)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_FROM=FoodRescue <noreply@foodrescue.com>
+
+# AI Service
+AI_SERVICE_URL=http://localhost:5001/api/ai
+
+# Google Maps (for distance calculations)
+GOOGLE_MAPS_API_KEY=your_key_here
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# Cors
+CORS_ORIGIN=http://localhost:3000
+
+# Session
+SESSION_SECRET=your_session_secret
+
+AI Service .env
+FLASK_ENV=development
+FLASK_PORT=5001
+
+# Model paths
+MODEL_PATH=./model/saved_models/urgency_model.pkl
+DATA_PATH=./data/training_data.csv
+
+# MongoDB (for fetching training data)
+MONGODB_URI=mongodb://localhost:27017/foodrescue
+
+
+Key Implementation Requirements
+1. Authentication & Authorization
+JWT-based authentication with access and refresh tokens
+HTTP-only cookies for token storage
+Protected routes requiring valid JWT
+Role-based access control middleware
+Password hashing with bcrypt (10 rounds)
+Email verification flow with expiring tokens
+Password reset flow with secure tokens
+Rate limiting on auth endpoints (5 attempts per 15 min)
+2. Image Upload Flow
+Frontend: Select images → Preview → Compress (max 2MB each)
+Upload to Cloudinary via signed upload preset
+Store Cloudinary URLs in MongoDB
+Delete old images when donation is cancelled/completed
+3. Real-Time Updates
+Socket.io connection on user login
+Join room based on user ID
+Emit events for:
+Donation status changes
+Volunteer location updates (every 30s)
+New notifications
+New matches
+Reconnection logic with exponential backoff
+Offline queue for failed emissions
+4. Geospatial Queries
+MongoDB 2dsphere index on location coordinates
+Query donations within radius: $nearSphere
+Calculate distances using Haversine formula
+Sort results by distance
+Display on map with clustering
+5. AI Matching Algorithm
+Urgency Prediction:
+Features: food_type, quantity, shelf_life_hours, time_of_day, day_of_week
+Model: Random Forest Classifier (scikit-learn)
+Output: urgency_score (0-1), category (high/medium/low)
+Retrain weekly with new donation data
+NGO Matching:
+Score based on:
+Distance (40% weight)
+Capacity match (20%)
+Historical acceptance rate (20%)
+Urgency alignment (10%)
+Category preference (10%)
+Return top 5 matches
+Notify top match first, then cascade if rejected
+6. Notification System
+In-app notifications via Socket.io (real-time)
+Email notifications for critical events (account verification, password reset)
+Push notifications (future enhancement)
+Notification preferences in user settings
+Mark as read functionality
+Auto-delete after 30 days
+7. Performance Optimizations
+MongoDB indexes on frequently queried fields (email, donationId, status, coordinates)
+Redis caching for user sessions and frequently accessed data
+Image lazy loading with Intersection Observer
+Pagination for large lists (20 items per page)
+Debounced search inputs (300ms delay)
+Code splitting for routes (React.lazy)
+Minification and compression in production
+8. Error Handling
+Global error handler middleware in Express
+Try-catch blocks in async functions
+Meaningful error messages for users
+Error logging to file system (./logs/error.log)
+Toast notifications for user errors
+404 page for invalid routes
+500 page for server errors
+Validation errors with field-specific messages
+9. Security Measures
+Helmet.js for security headers
+CORS configuration (whitelist frontend origin)
+Input sanitization (express-validator)
+Rate limiting (express-rate-limit)
+SQL injection prevention (parameterized queries)
+XSS prevention (sanitize HTML inputs)
+CSRF protection (double-submit cookies)
+Secure password requirements (min 8 chars, mixed case, numbers)
+Account lockout after 5 failed login attempts (15 min)
+10. Testing Requirements
+Unit tests for utility functions
+Integration tests for API endpoints
+Component tests for React components
+E2E tests for critical user flows
+Test coverage minimum 70%
+
+UI/UX Specifications
+Responsive Breakpoints
+/* Mobile: 320px - 767px */
+/* Tablet: 768px - 1023px */
+/* Desktop: 1024px+ */
+
+Component Spacing
+/* Card padding: 24px */
+/* Section margin: 48px */
+/* Element gap: 16px */
+/* Small gap: 8px */
+
+Shadow Levels
+--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+Animation Timing
+--transition-fast: 150ms;
+--transition-base: 300ms;
+--transition-slow: 500ms;
+--ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+Accessibility Requirements
+WCAG 2.1 Level AA compliance
+4.5:1 minimum contrast ratio for text
+Keyboard navigation support (Tab, Enter, Escape)
+Focus indicators on all interactive elements
+ARIA labels for icon-only buttons
+Alt text for all images
+Screen reader friendly
+Skip to main content link
+
+Form Validation Rules
+Registration
+Email: Valid format, unique in database
+Password: Min 8 chars, at least 1 uppercase, 1 lowercase, 1 number
+Confirm Password: Must match password
+Phone: 10 digits, valid Indian format
+Business Name (Donor): Min 3 chars
+Organization Name (NGO): Min 3 chars, unique
+Registration Number (NGO): Required, alphanumeric
+Donation Upload
+Food Category: Required, from predefined list
+Food Name: Required, min 3 chars, max 100 chars
+Quantity: Required, number > 0
+Best Before: Required, must be future date, max 7 days from now
+Preparation Time: Required, cannot be future
+Images: Optional, max 3 files, each max 5MB, formats: jpg, jpeg, png
+Special Instructions: Optional, max 500 chars
+Location: Required, valid coordinates or address
+
+Cron Jobs (Node-cron)
+1. Matching Job
+Schedule: Every 5 minutes Purpose: Find matches for pending donations
+// Check all pending donations
+// Call AI service for urgency prediction
+// Find top NGO matches
+// Send notifications to matched NGOs
+// Update donation status to 'matched'
+
+2. Expiry Check Job
+Schedule: Every 30 minutes Purpose: Check for expired/expiring donations
+// Find donations with expiry < 1 hour
+// Send urgent notifications
+// Auto-cancel donations past expiry
+// Update statistics
+
+3. Cleanup Job
+Schedule: Daily at 2 AM Purpose: Database maintenance
+// Delete old notifications (>30 days)
+// Archive completed donations (>90 days)
+// Clean up orphaned images
+// Delete expired password reset tokens
+// Compress old audit logs
+
+4. Analytics Update Job
+Schedule: Daily at midnight Purpose: Calculate and cache analytics
+// Calculate daily donation stats
+// Update user impact scores
+// Compute NGO ratings
+// Generate platform-wide metrics
+// Cache results in Redis
+
+
+Progressive Enhancement Features
+Phase 1 (MVP) - Core Features
+✅ User authentication and role management ✅ Donation upload and tracking ✅ Basic matching algorithm (rule-based) ✅ NGO donation acceptance ✅ Volunteer task management ✅ Admin user verification ✅ Real-time notifications ✅ Basic analytics
+Phase 2 - Enhanced Features
+AI-powered urgency prediction
+Advanced matching algorithm
+Map integration with routing
+Impact report generation
+Rating and review system
+Email notifications
+Search and filters
+Mobile responsive design
+Phase 3 - Advanced Features
+Mobile app (React Native)
+Offline mode with sync
+Multi-language support (Hindi, English)
+Advanced analytics dashboard
+Bulk donation upload (CSV)
+QR code for donation tracking
+Social media integration
+Gamification (badges, leaderboards)
+Payment integration for donations
+SMS notifications for low-connectivity areas
+
+Deployment Checklist
+Frontend
+[ ] Build optimized production bundle
+[ ] Configure environment variables
+[ ] Set up CDN for static assets
+[ ] Enable HTTPS
+[ ] Configure domain DNS
+[ ] Set up analytics (Google Analytics)
+[ ] Add error tracking (Sentry)
+[ ] Enable PWA features (service worker)
+Backend
+[ ] Set up production MongoDB cluster
+[ ] Configure Redis for caching
+[ ] Set up PM2 for process management
+[ ] Configure Nginx reverse proxy
+[ ] Enable HTTPS with SSL certificate
+[ ] Set up log rotation
+[ ] Configure automated backups
+[ ] Set up monitoring (New Relic/Datadog)
+[ ] Enable rate limiting
+[ ] Set up CI/CD pipeline
+AI Service
+[ ] Train production model with real data
+[ ] Set up model versioning
+[ ] Configure auto-scaling
+[ ] Set up monitoring
+[ ] Create model update pipeline
+
+Success Metrics
+User Metrics
+Total registered users (by role)
+Daily/monthly active users
+User retention rate
+Average session duration
+Donation Metrics
+Total donations created
+Successful delivery rate
+Average time from upload to delivery
+Food waste prevented (kg)
+Platform Metrics
+Average response time (API)
+Uptime percentage
+Error rate
+Match accuracy
+Impact Metrics
+Meals provided
+NGOs served
+CO2 emissions saved
+Volunteer hours contributed
+
+Final Notes for Windsurf
+Priorities:
+Set up project structure first (both frontend and backend)
+Implement authentication system completely
+Build donor dashboard with upload functionality
+Create NGO dashboard with browse and accept features
+Add volunteer task management
+Implement real-time notifications
+Add admin panel
+Integrate AI service
+Polish UI/UX with animations
+Testing and bug fixes
+Code Quality Standards:
+Use ESLint and Prettier
+Follow Airbnb JavaScript style guide
+Write meaningful commit messages
+Add comments for complex logic
+Create reusable components
+Keep components under 300 lines
+Use PropTypes or TypeScript interfaces
+Handle loading and error states
+Add meaningful console logs for debugging
+Write clean, readable code
+Best Practices:
+Mobile-first responsive design
+Accessibility from the start
+Performance optimization (lazy loading, code splitting)
+SEO-friendly (meta tags, semantic HTML)
+Secure by design (input validation, sanitization)
+Scalable architecture (modular, separation of concerns)
+Comprehensive error handling
+User-friendly error messages
+
+This is your complete blueprint. Build an amazing, production-ready FoodRescue platform that looks beautiful, works flawlessly, and makes a real social impact! 🚀🌱
