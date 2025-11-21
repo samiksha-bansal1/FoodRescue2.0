@@ -15,6 +15,8 @@ import DonorDashboard from "@/pages/DonorDashboard";
 import NGODashboard from "@/pages/NGODashboard";
 import VolunteerDashboard from "@/pages/VolunteerDashboard";
 import AdminDashboard from "@/pages/AdminDashboard";
+import Settings from "@/pages/Settings";
+import Help from "@/pages/Help";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -52,6 +54,22 @@ function Router() {
         <ProtectedRoute requiredRole={['admin']}>
           <DashboardLayout>
             <AdminDashboard />
+          </DashboardLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings">
+        <ProtectedRoute>
+          <DashboardLayout>
+            <Settings />
+          </DashboardLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/help">
+        <ProtectedRoute>
+          <DashboardLayout>
+            <Help />
           </DashboardLayout>
         </ProtectedRoute>
       </Route>
