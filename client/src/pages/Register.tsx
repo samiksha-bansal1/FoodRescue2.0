@@ -40,20 +40,46 @@ export default function Register() {
     vehicleType: '',
   });
 
-  const requestGeolocation = () => {
+  const requestGeolocation = async () => {
     setGeoLoading(true);
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData({
-            ...formData,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-          toast({
-            title: 'Location Captured',
-            description: `Latitude: ${position.coords.latitude.toFixed(4)}, Longitude: ${position.coords.longitude.toFixed(4)}`,
-          });
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          try {
+            // Get address from coordinates using reverse geocoding
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            );
+            const data = await response.json();
+            
+            setFormData({
+              ...formData,
+              latitude,
+              longitude,
+              address: {
+                street: data.address?.road || data.address?.building || formData.address.street,
+                city: data.address?.city || data.address?.town || formData.address.city,
+                state: data.address?.state || formData.address.state,
+                pincode: data.address?.postcode || formData.address.pincode,
+              },
+            });
+            toast({
+              title: 'Location Captured',
+              description: `${data.address?.city || 'Location'} - Coordinates: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+            });
+          } catch (error) {
+            toast({
+              title: 'Geocoding Error',
+              description: 'Location captured but address lookup failed.',
+            });
+            setFormData({
+              ...formData,
+              latitude,
+              longitude,
+            });
+          }
           setGeoLoading(false);
         },
         () => {
@@ -383,6 +409,28 @@ export default function Register() {
                           />
                         </div>
                       </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={requestGeolocation}
+                        disabled={geoLoading}
+                        className="w-full"
+                        data-testid="button-get-location-donor"
+                      >
+                        <Navigation className="w-4 h-4 mr-2" />
+                        {geoLoading ? 'Getting Location...' : 'Use My Current Location'}
+                      </Button>
+
+                      {formData.latitude && formData.longitude && (
+                        <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg text-sm">
+                          <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <div className="flex-1">
+                            <p className="font-medium text-emerald-900 dark:text-emerald-100">Location Captured</p>
+                            <p className="text-emerald-700 dark:text-emerald-300">{formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}</p>
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
 
