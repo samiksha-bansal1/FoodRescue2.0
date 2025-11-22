@@ -202,21 +202,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const volunteers = allUsers.filter(u => u.role === 'volunteer' && u.isVerified);
       
       if (volunteers.length > 0) {
-        const volunteer = volunteers[0]; // Simple assignment to first available volunteer
+        const volunteer = volunteers[0];
+        const donorUser = allUsers.find(u => u.id === donation.donorId);
+        
+        const pickupAddr = donation.location?.address || { street: 'Location', city: 'Unknown', state: '', pincode: '' };
+        const pickupLocation = {
+          address: `${pickupAddr.street}, ${pickupAddr.city}`,
+          coordinates: donation.location?.coordinates || [0, 0],
+        };
+        
+        const ngoUser = allUsers.find(u => u.id === user.id);
+        const deliveryAddr = ngoUser?.ngoProfile?.address || { street: 'NGO Location', city: 'City', state: '', pincode: '' };
+        const deliveryLocation = {
+          address: `${deliveryAddr.street}, ${deliveryAddr.city}`,
+          coordinates: ngoUser?.ngoProfile?.address?.coordinates || [0, 0],
+        };
         
         const task = await storage.createTask({
           donationId: donation.id,
           volunteerId: volunteer.id,
           donorId: donation.donorId,
           ngoId: user.id,
-          pickupLocation: {
-            address: `${donation.location.address.street}, ${donation.location.address.city}`,
-            coordinates: donation.location.coordinates,
-          },
-          deliveryLocation: {
-            address: 'NGO Address', // Would come from NGO profile
-            coordinates: [0, 0],
-          },
+          pickupLocation,
+          deliveryLocation,
           distance: '5.2',
           estimatedTime: 30,
         });

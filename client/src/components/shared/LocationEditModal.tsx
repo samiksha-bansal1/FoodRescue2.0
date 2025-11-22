@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { MapPin } from 'lucide-react';
+import { MapPin, Navigation } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 
@@ -25,6 +25,7 @@ export function LocationEditModal({ open, onOpenChange, currentLocation, userTyp
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
   const [formData, setFormData] = useState({
     street: currentLocation?.street || '',
     city: currentLocation?.city || '',
@@ -33,6 +34,41 @@ export function LocationEditModal({ open, onOpenChange, currentLocation, userTyp
     latitude: currentLocation?.coordinates[0] || 40.7128,
     longitude: currentLocation?.coordinates[1] || -74.0060,
   });
+
+  const requestGeolocation = () => {
+    setGeoLoading(true);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData({
+            ...formData,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          toast({
+            title: 'Location Captured',
+            description: 'Your current location has been set.',
+          });
+          setGeoLoading(false);
+        },
+        (error) => {
+          toast({
+            title: 'Location Access Denied',
+            description: 'Please enable location permissions and try again.',
+            variant: 'destructive',
+          });
+          setGeoLoading(false);
+        }
+      );
+    } else {
+      toast({
+        title: 'Geolocation Unavailable',
+        description: 'Your browser does not support geolocation.',
+        variant: 'destructive',
+      });
+      setGeoLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,6 +205,18 @@ export function LocationEditModal({ open, onOpenChange, currentLocation, userTyp
               />
             </div>
           </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={requestGeolocation}
+            disabled={geoLoading}
+            className="w-full"
+            data-testid="button-get-current-location"
+          >
+            <Navigation className="w-4 h-4 mr-2" />
+            {geoLoading ? 'Getting Location...' : 'Use My Current Location'}
+          </Button>
 
           <div className="flex gap-2 pt-4">
             <Button
