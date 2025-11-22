@@ -63,19 +63,21 @@ export class MemStorage implements IStorage {
     this.ratings = new Map();
     this.notifications = new Map();
     
-    // Create default admin user
-    this.createDefaultAdmin();
+    // Create default users
+    this.initializeDefaultUsers();
   }
 
-  private async createDefaultAdmin() {
+  private async initializeDefaultUsers() {
     const bcrypt = await import('bcryptjs');
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    
+    // Admin User
+    const adminPassword = await bcrypt.hash('admin123', 10);
     const adminId = randomUUID();
     const admin: User = {
       id: adminId,
       fullName: 'Admin User',
       email: 'admin@foodrescue.com',
-      password: hashedPassword,
+      password: adminPassword,
       role: 'admin',
       phone: '1234567890',
       isVerified: true,
@@ -87,6 +89,95 @@ export class MemStorage implements IStorage {
       lastLogin: null,
     };
     this.users.set(adminId, admin);
+
+    // Donor User (Restaurant)
+    const donorPassword = await bcrypt.hash('password123', 10);
+    const donorId = randomUUID();
+    const donor: User = {
+      id: donorId,
+      fullName: 'Pizza Palace',
+      email: 'donor@foodrescue.com',
+      password: donorPassword,
+      role: 'donor',
+      phone: '9876543210',
+      isVerified: true,
+      isActive: true,
+      donorProfile: {
+        businessName: 'Pizza Palace Restaurant',
+        businessType: 'Restaurant',
+        address: {
+          street: '123 Main Street',
+          city: 'New York',
+          state: 'NY',
+          pincode: '10001',
+          coordinates: [40.7128, -74.0060],
+        },
+      },
+      ngoProfile: null,
+      volunteerProfile: null,
+      createdAt: new Date(),
+      lastLogin: null,
+    };
+    this.users.set(donorId, donor);
+
+    // NGO User
+    const ngoPassword = await bcrypt.hash('password123', 10);
+    const ngoId = randomUUID();
+    const ngo: User = {
+      id: ngoId,
+      fullName: 'Hope Foundation',
+      email: 'ngo@foodrescue.com',
+      password: ngoPassword,
+      role: 'ngo',
+      phone: '9123456789',
+      isVerified: true,
+      isActive: true,
+      donorProfile: null,
+      ngoProfile: {
+        organizationName: 'Hope Foundation',
+        registrationNumber: 'NGO-2024-001',
+        address: {
+          street: '456 Charity Avenue',
+          city: 'New York',
+          state: 'NY',
+          pincode: '10002',
+          coordinates: [40.7150, -73.9960],
+        },
+        capacity: 500,
+        acceptedCategories: ['Cooked Meals', 'Bakery', 'Vegetables', 'Fruits'],
+      },
+      volunteerProfile: null,
+      createdAt: new Date(),
+      lastLogin: null,
+    };
+    this.users.set(ngoId, ngo);
+
+    // Volunteer User
+    const volunteerPassword = await bcrypt.hash('password123', 10);
+    const volunteerId = randomUUID();
+    const volunteer: User = {
+      id: volunteerId,
+      fullName: 'John Delivery',
+      email: 'volunteer@foodrescue.com',
+      password: volunteerPassword,
+      role: 'volunteer',
+      phone: '8765432109',
+      isVerified: true,
+      isActive: true,
+      donorProfile: null,
+      ngoProfile: null,
+      volunteerProfile: {
+        vehicleType: 'Motorcycle',
+        availability: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        currentLocation: {
+          coordinates: [40.7140, -74.0050],
+        },
+        completedTasks: 0,
+      },
+      createdAt: new Date(),
+      lastLogin: null,
+    };
+    this.users.set(volunteerId, volunteer);
   }
 
   // Users
