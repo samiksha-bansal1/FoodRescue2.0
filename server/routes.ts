@@ -187,12 +187,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         matchedNGOId: user.id,
       });
 
-      // Create notification for donor
+      // Create notification for donor with location details
+      const donorUser = allUsers.find(u => u.id === donation.donorId);
+      const ngoName = user.ngoProfile?.organizationName || 'An NGO';
+      const pickupLocation = donation.location?.address?.city || 'your location';
+      
       await storage.createNotification({
         recipientId: donation.donorId,
         type: 'donation_accepted',
         title: 'Donation Accepted',
-        message: 'Your donation has been accepted by an NGO',
+        message: `${ngoName} accepted your donation from ${pickupLocation}. Volunteer pickup starts soon.`,
         relatedDonationId: donation.id,
         relatedUserId: user.id,
       });
@@ -234,12 +238,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           status: 'matched',
         });
 
-        // Notify volunteer
+        // Notify volunteer with location details
+        const pickupAddrDetails = donation.location?.address;
+        const pickupText = pickupAddrDetails ? `${pickupAddrDetails.street}, ${pickupAddrDetails.city}` : 'Pickup location';
+        const ngoAddrDetails = user.ngoProfile?.address;
+        const deliveryText = ngoAddrDetails ? `${ngoAddrDetails.street}, ${ngoAddrDetails.city}` : 'NGO location';
+        
         await storage.createNotification({
           recipientId: volunteer.id,
           type: 'task_assigned',
-          title: 'New Task Assigned',
-          message: 'You have been assigned a new delivery task',
+          title: 'New Delivery Task',
+          message: `Pick up ${donation.foodDetails.name} from ${pickupText} and deliver to ${user.ngoProfile?.organizationName || 'the NGO'} at ${deliveryText}`,
           relatedDonationId: donation.id,
           relatedUserId: null,
         });
@@ -508,6 +517,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Update profile error:', error);
       res.status(500).json({ error: 'Failed to update profile' });
+    }
+  });
+
+  // Get all users for admin map
+  app.get("/api/admin/users", authenticateToken, async (req, res) => {
+    try {
+      const user = req.user;
+      if (user.role !== 'admin') {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const allUsers = await storage.getAllUsers();
+      const usersResponse = allUsers.map(u => {
+        const userCopy = { ...u };
+        delete (userCopy as any).password;
+        return userCopy;
+      });
+
+      res.json(usersResponse);
+    } catch (error) {
+      console.error('Get users error:', error);
+      res.status(500).json({ error: 'Failed to fetch users' });
     }
   });
 

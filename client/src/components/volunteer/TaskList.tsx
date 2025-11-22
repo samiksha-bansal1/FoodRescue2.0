@@ -2,15 +2,18 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { TaskLocationMap } from '@/components/volunteer/TaskLocationMap';
 import { Button } from '@/components/ui/button';
-import { Package, MapPin, Clock, Truck, AlertCircle } from 'lucide-react';
+import { Package, MapPin, Clock, Truck, AlertCircle, Map } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import type { VolunteerTask, Donation } from '@shared/schema';
 
 export function TaskList() {
   const { toast } = useToast();
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   
   const { data: tasks, isLoading } = useQuery<VolunteerTask[]>({
     queryKey: ['/api/tasks'],
@@ -180,7 +183,7 @@ export function TaskList() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mb-4">
                       <Button
                         onClick={() => handleAcceptTask(task.id)}
                         className="flex-1"
@@ -196,7 +199,22 @@ export function TaskList() {
                       >
                         Reject
                       </Button>
+                      <Button
+                        onClick={() => setExpandedTaskId(expandedTaskId === task.id ? null : task.id)}
+                        variant="outline"
+                        size="icon"
+                        data-testid="button-view-map"
+                        title="View route map"
+                      >
+                        <Map className="w-4 h-4" />
+                      </Button>
                     </div>
+
+                    {expandedTaskId === task.id && (
+                      <div className="mt-4 pt-4 border-t">
+                        <TaskLocationMap task={task} />
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
