@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from '@/components/ui/sidebar';
-import { Home, Package, Heart, Truck, Users, Settings, HelpCircle, LayoutDashboard } from 'lucide-react';
+import { Home, Package, Heart, Truck, Users, Settings, HelpCircle, LayoutDashboard, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useLocation } from 'wouter';
 import { NotificationBell } from '@/components/shared/NotificationBell';
@@ -18,15 +18,23 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const roleMenus = {
     donor: [
       { title: 'Dashboard', url: '/donor', icon: LayoutDashboard },
+      { title: 'My Donations', url: '/donor/donations', icon: Package },
+      { title: 'Impact Report', url: '/donor/impact', icon: Home },
     ],
     ngo: [
       { title: 'Dashboard', url: '/ngo', icon: LayoutDashboard },
+      { title: 'Browse Donations', url: '/ngo/browse', icon: Package },
+      { title: 'My Donations', url: '/ngo/donations', icon: Heart },
     ],
     volunteer: [
       { title: 'Dashboard', url: '/volunteer', icon: LayoutDashboard },
+      { title: 'Available Tasks', url: '/volunteer/tasks', icon: Truck },
+      { title: 'My Deliveries', url: '/volunteer/deliveries', icon: Package },
     ],
     admin: [
       { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+      { title: 'User Management', url: '/admin/users', icon: Users },
+      { title: 'All Donations', url: '/admin/donations', icon: Package },
     ],
   };
 
