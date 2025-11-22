@@ -89,24 +89,26 @@ export function DonationBrowser() {
                     <div className="flex items-center gap-2">
                       <Package className="w-4 h-4" />
                       <span>
-                        {donation.foodDetails.quantity} {donation.foodDetails.unit} • {donation.foodDetails.category}
+                        {donation.foodDetails?.quantity} {donation.foodDetails?.unit} • {donation.foodDetails?.category}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      <span>
-                        {donation.location.address.city}, {donation.location.address.state}
-                      </span>
-                    </div>
+                    {donation.location?.address && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        <span>
+                          {donation.location.address.city}, {donation.location.address.state}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       <span>
-                        Expires {formatDistanceToNow(new Date(donation.foodDetails.expiryTime), { addSuffix: true })}
+                        Expires {formatDistanceToNow(new Date(donation.foodDetails?.expiryTime || new Date()), { addSuffix: true })}
                       </span>
                     </div>
                   </div>
 
-                  {donation.foodDetails.dietaryInfo && donation.foodDetails.dietaryInfo.length > 0 && (
+                  {donation.foodDetails?.dietaryInfo && donation.foodDetails.dietaryInfo.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-4">
                       {donation.foodDetails.dietaryInfo.map((info) => (
                         <span

@@ -62,11 +62,11 @@ export function DonationList() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                         <div>
                           <span className="font-medium">Category:</span>{' '}
-                          {donation.foodDetails.category}
+                          {donation.foodDetails?.category || 'N/A'}
                         </div>
                         <div>
                           <span className="font-medium">Quantity:</span>{' '}
-                          {donation.foodDetails.quantity} {donation.foodDetails.unit}
+                          {donation.foodDetails?.quantity || 0} {donation.foodDetails?.unit || 'N/A'}
                         </div>
                         <div>
                           <span className="font-medium">ID:</span> {donation.donationId}
