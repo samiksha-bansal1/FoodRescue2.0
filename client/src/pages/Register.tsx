@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocation, Link } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Building2, Heart, Truck, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Package, Building2, Heart, Truck, ChevronRight, ArrowLeft, Navigation, MapPin } from 'lucide-react';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import type { userRoles } from '@shared/schema';
 
@@ -17,6 +17,7 @@ export default function Register() {
   const { toast } = useToast();
   const [step, setStep] = useState<'role' | 'details'>('role');
   const [isLoading, setIsLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -31,11 +32,48 @@ export default function Register() {
       state: '',
       pincode: '',
     },
+    latitude: 40.7128,
+    longitude: -74.0060,
     organizationName: '',
     registrationNumber: '',
     capacity: '',
     vehicleType: '',
   });
+
+  const requestGeolocation = () => {
+    setGeoLoading(true);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData({
+            ...formData,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          toast({
+            title: 'Location Captured',
+            description: `Latitude: ${position.coords.latitude.toFixed(4)}, Longitude: ${position.coords.longitude.toFixed(4)}`,
+          });
+          setGeoLoading(false);
+        },
+        () => {
+          toast({
+            title: 'Location Access Denied',
+            description: 'Please enable location permissions to use this feature.',
+            variant: 'destructive',
+          });
+          setGeoLoading(false);
+        }
+      );
+    } else {
+      toast({
+        title: 'Geolocation Unavailable',
+        description: 'Your browser does not support geolocation.',
+        variant: 'destructive',
+      });
+      setGeoLoading(false);
+    }
+  };
 
   const roles = [
     {
@@ -85,7 +123,7 @@ export default function Register() {
           businessType: formData.businessType,
           address: {
             ...formData.address,
-            coordinates: [0, 0] as [number, number],
+            coordinates: [formData.latitude, formData.longitude] as [number, number],
           },
         };
       } else if (selectedRole === 'ngo') {
@@ -94,7 +132,7 @@ export default function Register() {
           registrationNumber: formData.registrationNumber,
           address: {
             ...formData.address,
-            coordinates: [0, 0] as [number, number],
+            coordinates: [formData.latitude, formData.longitude] as [number, number],
           },
           capacity: parseInt(formData.capacity) || 0,
           acceptedCategories: [],
@@ -104,7 +142,7 @@ export default function Register() {
           vehicleType: formData.vehicleType,
           availability: [],
           currentLocation: {
-            coordinates: [0, 0] as [number, number],
+            coordinates: [formData.latitude, formData.longitude] as [number, number],
           },
           completedTasks: 0,
         };
