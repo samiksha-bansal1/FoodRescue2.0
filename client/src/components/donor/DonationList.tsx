@@ -3,12 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { StatusBadge } from '@/components/shared/StatusBadge';
+import { DonationTimeline } from '@/components/shared/DonationTimeline';
 import { Package } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Donation } from '@shared/schema';
 
 export function DonationList() {
+  const [expandedDonationId, setExpandedDonationId] = useState<string | null>(null);
+  
   const { data: donations, isLoading } = useQuery<Donation[]>({
     queryKey: ['/api/donations'],
   });
@@ -48,38 +52,49 @@ export function DonationList() {
             >
               <Card className="hover-elevate transition-all duration-300">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-lg" data-testid="text-food-name">
-                          {donation.foodDetails.name}
-                        </h3>
-                        <StatusBadge
-                          status={donation.status}
-                          urgency={donation.urgencyCategory || undefined}
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-                        <div>
-                          <span className="font-medium">Category:</span>{' '}
-                          {donation.foodDetails?.category || 'N/A'}
+                  <div 
+                    className="cursor-pointer"
+                    onClick={() => setExpandedDonationId(expandedDonationId === donation.id ? null : donation.id)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold text-lg" data-testid="text-food-name">
+                            {donation.foodDetails.name}
+                          </h3>
+                          <StatusBadge
+                            status={donation.status}
+                            urgency={donation.urgencyCategory || undefined}
+                          />
                         </div>
-                        <div>
-                          <span className="font-medium">Quantity:</span>{' '}
-                          {donation.foodDetails?.quantity || 0} {donation.foodDetails?.unit || 'N/A'}
-                        </div>
-                        <div>
-                          <span className="font-medium">ID:</span> {donation.donationId}
-                        </div>
-                        <div>
-                          <span className="font-medium">Posted:</span>{' '}
-                          {formatDistanceToNow(new Date(donation.createdAt || Date.now()), {
-                            addSuffix: true,
-                          })}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                          <div>
+                            <span className="font-medium">Category:</span>{' '}
+                            {donation.foodDetails?.category || 'N/A'}
+                          </div>
+                          <div>
+                            <span className="font-medium">Quantity:</span>{' '}
+                            {donation.foodDetails?.quantity || 0} {donation.foodDetails?.unit || 'N/A'}
+                          </div>
+                          <div>
+                            <span className="font-medium">ID:</span> {donation.donationId}
+                          </div>
+                          <div>
+                            <span className="font-medium">Posted:</span>{' '}
+                            {formatDistanceToNow(new Date(donation.createdAt || Date.now()), {
+                              addSuffix: true,
+                            })}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  
+                  {expandedDonationId === donation.id && (
+                    <div className="mt-4 pt-4 border-t">
+                      <DonationTimeline donation={donation} />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

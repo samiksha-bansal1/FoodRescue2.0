@@ -1,10 +1,11 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { Package, TrendingUp, Scale, Award, Plus } from 'lucide-react';
+import { Package, TrendingUp, Scale, Award, Plus, MapPin } from 'lucide-react';
 import { StatsCard } from '@/components/shared/StatsCard';
 import { Button } from '@/components/ui/button';
 import { useState, useMemo } from 'react';
 import { DonationUploadModal } from '@/components/donor/DonationUploadModal';
 import { DonationList } from '@/components/donor/DonationList';
+import { LocationEditModal } from '@/components/shared/LocationEditModal';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import type { Donation } from '@shared/schema';
@@ -12,6 +13,7 @@ import type { Donation } from '@shared/schema';
 export default function DonorDashboard() {
   const { user } = useAuth();
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   const { data: donations = [] } = useQuery<Donation[]>({
     queryKey: ['/api/donations'],
@@ -38,7 +40,7 @@ export default function DonorDashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold mb-2" data-testid="text-welcome">
               Welcome back, {user?.donorProfile?.businessName || user?.fullName}!
@@ -47,10 +49,16 @@ export default function DonorDashboard() {
               Track your donations and see your impact
             </p>
           </div>
-          <Button onClick={() => setShowUploadModal(true)} size="lg" data-testid="button-upload-donation">
-            <Plus className="w-5 h-5 mr-2" />
-            Create Donation
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowLocationModal(true)} variant="outline" data-testid="button-edit-location">
+              <MapPin className="w-5 h-5 mr-2" />
+              Edit Location
+            </Button>
+            <Button onClick={() => setShowUploadModal(true)} size="lg" data-testid="button-upload-donation">
+              <Plus className="w-5 h-5 mr-2" />
+              Create Donation
+            </Button>
+          </div>
         </div>
       </motion.div>
 
@@ -87,6 +95,13 @@ export default function DonorDashboard() {
       <DonationUploadModal
         open={showUploadModal}
         onOpenChange={setShowUploadModal}
+      />
+
+      <LocationEditModal
+        open={showLocationModal}
+        onOpenChange={setShowLocationModal}
+        currentLocation={user?.donorProfile?.address}
+        userType="donor"
       />
     </div>
   );

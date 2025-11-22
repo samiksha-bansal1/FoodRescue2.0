@@ -477,6 +477,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user profile with new location
+  app.patch("/api/auth/profile", authenticateToken, async (req, res) => {
+    try {
+      const user = req.user;
+      const { donorProfile, ngoProfile, volunteerProfile } = req.body;
+
+      const updatedUser = await storage.updateUser(user.id, {
+        ...(donorProfile && { donorProfile }),
+        ...(ngoProfile && { ngoProfile }),
+        ...(volunteerProfile && { volunteerProfile }),
+      });
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const userResponse = { ...updatedUser };
+      delete (userResponse as any).password;
+
+      res.json(userResponse);
+    } catch (error) {
+      console.error('Update profile error:', error);
+      res.status(500).json({ error: 'Failed to update profile' });
+    }
+  });
+
   // Create HTTP server and Socket.IO
   const httpServer = createServer(app);
   const io = new SocketIOServer(httpServer, {

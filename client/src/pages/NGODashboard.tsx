@@ -1,16 +1,19 @@
-import { Heart, Package, Users, TrendingUp } from 'lucide-react';
+import { Heart, Package, Users, TrendingUp, MapPin } from 'lucide-react';
 import { StatsCard } from '@/components/shared/StatsCard';
 import { DonationBrowser } from '@/components/ngo/DonationBrowser';
 import { AcceptedDonations } from '@/components/ngo/AcceptedDonations';
+import { LocationEditModal } from '@/components/shared/LocationEditModal';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Donation } from '@shared/schema';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function NGODashboard() {
   const { user } = useAuth();
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   const { data: allDonations = [] } = useQuery<Donation[]>({
     queryKey: ['/api/donations/available'],
@@ -42,12 +45,20 @@ export default function NGODashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-welcome">
-          Welcome, {user?.ngoProfile?.organizationName || user?.fullName}!
-        </h1>
-        <p className="text-muted-foreground">
-          Browse and accept food donations in your area
-        </p>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2" data-testid="text-welcome">
+              Welcome, {user?.ngoProfile?.organizationName || user?.fullName}!
+            </h1>
+            <p className="text-muted-foreground">
+              Browse and accept food donations in your area
+            </p>
+          </div>
+          <Button onClick={() => setShowLocationModal(true)} variant="outline" data-testid="button-edit-location">
+            <MapPin className="w-5 h-5 mr-2" />
+            Edit Location
+          </Button>
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -91,6 +102,13 @@ export default function NGODashboard() {
           <AcceptedDonations />
         </TabsContent>
       </Tabs>
+
+      <LocationEditModal
+        open={showLocationModal}
+        onOpenChange={setShowLocationModal}
+        currentLocation={user?.ngoProfile?.address}
+        userType="ngo"
+      />
     </div>
   );
 }
