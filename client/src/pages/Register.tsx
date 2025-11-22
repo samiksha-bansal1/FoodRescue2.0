@@ -481,21 +481,117 @@ export default function Register() {
                           />
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="latitude">Latitude</Label>
+                          <Input
+                            id="latitude"
+                            type="number"
+                            step="0.0001"
+                            value={formData.latitude}
+                            onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) })}
+                            data-testid="input-latitude"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="longitude">Longitude</Label>
+                          <Input
+                            id="longitude"
+                            type="number"
+                            step="0.0001"
+                            value={formData.longitude}
+                            onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) })}
+                            data-testid="input-longitude"
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={requestGeolocation}
+                        disabled={geoLoading}
+                        className="w-full"
+                        data-testid="button-get-location-ngo"
+                      >
+                        <Navigation className="w-4 h-4 mr-2" />
+                        {geoLoading ? 'Getting Location...' : 'Use My Current Location'}
+                      </Button>
+
+                      {formData.latitude && formData.longitude && (
+                        <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg text-sm">
+                          <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <div className="flex-1">
+                            <p className="font-medium text-emerald-900 dark:text-emerald-100">Location Captured</p>
+                            <p className="text-emerald-700 dark:text-emerald-300">{formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}</p>
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
 
                   {selectedRole === 'volunteer' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="vehicleType">Vehicle Type</Label>
-                      <Input
-                        id="vehicleType"
-                        value={formData.vehicleType}
-                        onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value })}
-                        placeholder="e.g., Bike, Car, Van"
-                        required
-                        data-testid="input-vehicle-type"
-                      />
-                    </div>
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="vehicleType">Vehicle Type</Label>
+                        <Input
+                          id="vehicleType"
+                          value={formData.vehicleType}
+                          onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value })}
+                          placeholder="e.g., Bike, Car, Van"
+                          required
+                          data-testid="input-vehicle-type"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="latitude">Latitude</Label>
+                          <Input
+                            id="latitude"
+                            type="number"
+                            step="0.0001"
+                            value={formData.latitude}
+                            onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) })}
+                            data-testid="input-latitude"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="longitude">Longitude</Label>
+                          <Input
+                            id="longitude"
+                            type="number"
+                            step="0.0001"
+                            value={formData.longitude}
+                            onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) })}
+                            data-testid="input-longitude"
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={requestGeolocation}
+                        disabled={geoLoading}
+                        className="w-full"
+                        data-testid="button-get-location-volunteer"
+                      >
+                        <Navigation className="w-4 h-4 mr-2" />
+                        {geoLoading ? 'Getting Location...' : 'Use My Current Location'}
+                      </Button>
+
+                      {formData.latitude && formData.longitude && (
+                        <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg text-sm">
+                          <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <div className="flex-1">
+                            <p className="font-medium text-emerald-900 dark:text-emerald-100">Location Captured</p>
+                            <p className="text-emerald-700 dark:text-emerald-300">{formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}</p>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
 
                   <Button type="submit" className="w-full" disabled={isLoading} data-testid="button-register">
