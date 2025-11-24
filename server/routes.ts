@@ -123,7 +123,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/donations/available", authenticateToken, async (req, res) => {
     try {
       const donations = await storage.getAvailableDonations();
-      res.json(donations);
+      // Ensure each donation has donor information attached
+      const withDonors = donations.map(d => ({
+        ...d,
+        donor: d.donor || {
+          id: d.donorId,
+          fullName: 'Unknown Donor',
+          donorProfile: { rating: 0, totalRatings: 0, ratingBreakdown: { foodQuality: 0, packaging: 0, accuracy: 0, communication: 0 } }
+        }
+      }));
+      res.json(withDonors);
     } catch (error) {
       console.error('Get available donations error:', error);
       res.status(500).json({ error: 'Failed to fetch available donations' });

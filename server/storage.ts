@@ -237,8 +237,23 @@ export class MemStorage implements IStorage {
     return Array.from(this.donations.values()).filter(d => d.donorId === donorId);
   }
 
-  async getAvailableDonations(): Promise<Donation[]> {
-    return Array.from(this.donations.values()).filter(d => d.status === 'pending');
+  async getAvailableDonations(): Promise<any[]> {
+    const availableDonations = Array.from(this.donations.values()).filter(d => d.status === 'pending');
+    
+    // Attach donor info to each donation
+    return availableDonations.map(donation => {
+      const donor = this.users.get(donation.donorId);
+      return {
+        ...donation,
+        donor: donor ? {
+          id: donor.id,
+          fullName: donor.fullName,
+          email: donor.email,
+          phone: donor.phone,
+          donorProfile: donor.donorProfile,
+        } : null,
+      };
+    });
   }
 
   async getDonationsByNGO(ngoId: string): Promise<Donation[]> {
