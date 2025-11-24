@@ -331,9 +331,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pickupTime: new Date(),
       });
 
-      // Get donation details
+      // Get donation details and update to 75% completion
       const donation = await storage.getDonation(task.donationId);
       if (donation) {
+        // Update donation status to "accepted" (75% completion)
+        await storage.updateDonation(task.donationId, {
+          status: 'accepted',
+        });
+
         // Notify donor
         await storage.createNotification({
           recipientId: donation.donorId,
@@ -353,6 +358,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           relatedDonationId: donation.id,
           relatedUserId: user.id,
         });
+
+        // Emit Socket.IO event for real-time update
+        const io = (app as any).io;
+        if (io) {
+          io.to(`user_${donation.donorId}`).emit('task_accepted', {
+            donationId: donation.id,
+            completionPercentage: 75,
+            message: 'Volunteer accepted your task - 75% complete',
+          });
+          io.to(`user_${task.ngoId}`).emit('task_accepted', {
+            donationId: donation.id,
+            completionPercentage: 75,
+            message: 'Volunteer accepted the task',
+          });
+        }
       }
 
       res.json(updatedTask);
@@ -435,9 +455,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         deliveryTime: new Date().toISOString(),
       });
 
-      // Update donation status to delivered
-      await storage.updateDonation(task.donationId, { status: 'delivered' });
+      // Update donation status to delivered (100% completion)
+      const updatedDonation = await storage.updateDonation(task.donationId, { status: 'delivered' });
 
+      // Get donor details for notification
+      const donor = await storage.getUser(task.donorId);
+      
       // Notify NGO that delivery is complete - they should now rate the donor
       const ngoUser = await storage.getUser(task.ngoId);
       if (ngoUser) {
@@ -451,13 +474,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Emit Socket.IO event
+      // Notify donor that delivery is complete
+      await storage.createNotification({
+        recipientId: task.donorId,
+        type: 'delivery_completed',
+        title: 'Your Donation Delivered',
+        message: `Your donation has been successfully delivered by our volunteer team. Thank you for your contribution!`,
+        relatedDonationId: task.donationId,
+        relatedUserId: user.id,
+      });
+
+      // Emit Socket.IO events for 100% completion
       const io = (app as any).io;
-      if (io && ngoUser) {
-        io.to(`user_${ngoUser.id}`).emit('delivery_completed', {
-          taskId: id,
+      if (io) {
+        // Notify NGO - 100% complete, ready for rating
+        if (ngoUser) {
+          io.to(`user_${ngoUser.id}`).emit('delivery_completed', {
+            taskId: id,
+            donationId: task.donationId,
+            completionPercentage: 100,
+            message: 'Delivery completed - 100%',
+          });
+        }
+        // Notify donor - 100% complete
+        io.to(`user_${task.donorId}`).emit('delivery_completed', {
           donationId: task.donationId,
-          message: 'Delivery completed',
+          completionPercentage: 100,
+          message: 'Your donation delivery is complete!',
         });
       }
 

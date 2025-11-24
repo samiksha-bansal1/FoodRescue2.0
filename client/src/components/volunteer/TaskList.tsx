@@ -9,11 +9,14 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/contexts/AuthContext';
+import { CompletionBar } from '@/components/shared/CompletionBar';
 import type { VolunteerTask, Donation } from '@shared/schema';
 import { RatingModal } from '@/components/ngo/RatingModal';
 
 export function TaskList() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   const [ratingModal, setRatingModal] = useState<{
     open: boolean;
@@ -22,7 +25,7 @@ export function TaskList() {
     donorName?: string;
   }>({ open: false });
   
-  const { data: tasks, isLoading } = useQuery<VolunteerTask[]>({
+  const { data: tasks = [], isLoading: tasksLoading } = useQuery<VolunteerTask[]>({
     queryKey: ['/api/tasks'],
   });
 
@@ -30,7 +33,17 @@ export function TaskList() {
     queryKey: ['/api/donations'],
   });
 
-  const availableTasks = tasks?.filter(t => t.status === 'assigned') || [];
+  // Filter donations to show only those assigned to this volunteer
+  const assignedDonations = donations.filter(
+    d => (d.status === 'matched' || d.status === 'accepted' || d.status === 'in_transit') && 
+          d.assignedVolunteerId === user?.id
+  ) || [];
+
+  // Use donations as primary source if available, fallback to tasks
+  const availableTasks = assignedDonations.length > 0 ? assignedDonations : 
+    tasks?.filter(t => t.status === 'assigned' || t.status === 'accepted') || [];
+  
+  const isLoading = tasksLoading || !donations;
 
   const getUrgencyColor = (expiryTime: string) => {
     const now = new Date();
@@ -137,17 +150,25 @@ export function TaskList() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Available Delivery Tasks ({availableTasks.length})</CardTitle>
+          <CardTitle>Your Assigned Tasks ({availableTasks.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
-            {availableTasks.map((task, index) => {
-              const donation = donations.find(d => d.id === task.donationId);
+            {availableTasks.map((item, index) => {
+              const isDonation = 'foodDetails' in item;
+              const donation = isDonation ? item as Donation : donations.find(d => d.id === (item as VolunteerTask).donationId);
+              const task = isDonation ? null : item as VolunteerTask;
               const urgencyLabel = donation ? getUrgencyLabel(donation.foodDetails.expiryTime) : '';
+              const taskId = task?.id || donation?.id;
+              const completionPercentage = donation?.completionPercentage || 0;
+              const statusBadge = completionPercentage === 0 ? 'Assigned' : 
+                                completionPercentage === 50 ? 'NGO Accepted' :
+                                completionPercentage === 75 ? 'Volunteer Accepted' :
+                                completionPercentage === 100 ? 'Delivered' : 'In Progress';
 
               return (
                 <motion.div
-                  key={task.id}
+                  key={taskId}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
@@ -157,15 +178,18 @@ export function TaskList() {
                       <div className="mb-4 flex items-start justify-between">
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg mb-2">
-                            {donation?.foodDetails.name || 'Delivery Task'} #{task.id?.slice(0, 8)}
+                            {donation?.foodDetails.name || 'Delivery Task'} #{taskId?.slice(0, 8)}
                           </h3>
-                          <div className="flex gap-2 flex-wrap">
+                          <div className="flex gap-2 flex-wrap mb-3">
                             <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                              Assigned
+                              {statusBadge}
                             </span>
                             <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium bg-orange-100 ${getUrgencyColor(donation?.foodDetails.expiryTime || '')}`}>
                               {urgencyLabel}
                             </span>
+                          </div>
+                          <div className="mb-3">
+                            {donation && <CompletionBar percentage={completionPercentage} status={donation.status} />}
                           </div>
                         </div>
                       </div>

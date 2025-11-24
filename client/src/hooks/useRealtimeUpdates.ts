@@ -32,17 +32,24 @@ export function useRealtimeUpdates() {
       });
 
       socket.on('donation_accepted', (data: any) => {
-        console.log('Donation accepted event:', data);
-        // Invalidate relevant queries
+        console.log('Donation accepted event (50%):', data);
         queryClient.invalidateQueries({ queryKey: ['/api/donations'] });
         queryClient.invalidateQueries({ queryKey: ['/api/donations/available'] });
         queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
       });
 
-      socket.on('delivery_completed', (data: any) => {
-        console.log('Delivery completed event:', data);
+      socket.on('task_accepted', (data: any) => {
+        console.log('Task accepted event (75%):', data);
         queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
         queryClient.invalidateQueries({ queryKey: ['/api/donations'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/donations/available'] });
+      });
+
+      socket.on('delivery_completed', (data: any) => {
+        console.log('Delivery completed event (100%):', data);
+        queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/donations'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/donations/available'] });
       });
 
       socket.on('task_assigned', (data: any) => {
