@@ -10,6 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Donation } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { DonorRatingDisplay } from './DonorRatingDisplay';
 
 export function DonationBrowser() {
   const { toast } = useToast();
@@ -118,6 +119,13 @@ export function DonationBrowser() {
                           {info}
                         </span>
                       ))}
+                    </div>
+                  )}
+
+                  {(donation as any).donor && (
+                    <div className="mb-4">
+                      <p className="text-xs font-semibold mb-2 text-muted-foreground">DONOR REPUTATION</p>
+                      <DonorRatingDisplay donor={(donation as any).donor} />
                     </div>
                   )}
 
