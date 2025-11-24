@@ -443,6 +443,19 @@ export class MemStorage implements IStorage {
     return 'low';
   }
 
+  private calculateCompletionPercentage(status: string): number {
+    const map: Record<string, number> = {
+      'pending': 0,
+      'matched': 50,
+      'accepted': 75,
+      'picked_up': 80,
+      'in_transit': 90,
+      'delivered': 100,
+      'cancelled': 0,
+    };
+    return map[status] || 0;
+  }
+
   async updateDonation(id: string, updates: Partial<Donation>): Promise<Donation | undefined> {
     const donation = this.donations.get(id);
     if (!donation) return undefined;
@@ -452,6 +465,11 @@ export class MemStorage implements IStorage {
       ...updates,
       updatedAt: new Date(),
     };
+
+    // Auto-calculate completion percentage based on status
+    if (updates.status) {
+      updatedDonation.completionPercentage = this.calculateCompletionPercentage(updates.status);
+    }
     
     if (updates.status && updates.status !== donation.status) {
       updatedDonation.timeline = [

@@ -101,9 +101,11 @@ export const donations = pgTable("donations", {
   urgencyCategory: text("urgency_category").$type<typeof urgencyLevels[number]>(),
   
   status: text("status").notNull().$type<typeof donationStatuses[number]>().default("pending"),
+  completionPercentage: integer("completion_percentage").default(0),
   
   matchedNGOId: varchar("matched_ngo_id"),
   assignedVolunteerId: varchar("assigned_volunteer_id"),
+  taskId: varchar("task_id"),
   
   timeline: jsonb("timeline").$type<Array<{
     status: string;
