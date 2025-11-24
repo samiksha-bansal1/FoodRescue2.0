@@ -69,9 +69,195 @@ export class MemStorage implements IStorage {
 
   private async initializeDefaultUsers() {
     const bcrypt = await import('bcryptjs');
-    
-    // Admin User
+    const testPassword = await bcrypt.hash('password123', 10);
     const adminPassword = await bcrypt.hash('admin123', 10);
+
+    // ===== DONORS =====
+    const donors = [
+      {
+        email: 'donor1@foodrescue.test',
+        fullName: 'Pizza Palace Restaurant',
+        phone: '555-0001',
+        businessName: 'Pizza Palace Restaurant',
+        businessType: 'Restaurant',
+        city: 'New York',
+        coordinates: [40.7128, -74.0060] as [number, number],
+      },
+      {
+        email: 'donor2@foodrescue.test',
+        fullName: 'Fresh Market Bakery',
+        phone: '555-0002',
+        businessName: 'Fresh Market Bakery',
+        businessType: 'Bakery',
+        city: 'Brooklyn',
+        coordinates: [40.6782, -73.9442] as [number, number],
+      },
+      {
+        email: 'donor3@foodrescue.test',
+        fullName: 'Organic Farm Stand',
+        phone: '555-0003',
+        businessName: 'Organic Farm Stand',
+        businessType: 'Farm',
+        city: 'Queens',
+        coordinates: [40.7282, -73.7949] as [number, number],
+      },
+    ];
+
+    const donorUsers = donors.map(d => {
+      const id = randomUUID();
+      const user: User = {
+        id,
+        fullName: d.fullName,
+        email: d.email,
+        password: testPassword,
+        role: 'donor',
+        phone: d.phone,
+        isVerified: true,
+        isActive: true,
+        donorProfile: {
+          businessName: d.businessName,
+          businessType: d.businessType,
+          address: {
+            street: `${Math.floor(Math.random() * 900) + 100} Main Street`,
+            city: d.city,
+            state: 'NY',
+            pincode: `1000${Math.floor(Math.random() * 10)}`,
+            coordinates: d.coordinates,
+          },
+          rating: Math.random() * 2 + 3.5,
+          totalRatings: Math.floor(Math.random() * 20) + 5,
+          ratingBreakdown: {
+            foodQuality: Math.random() * 2 + 3,
+            packaging: Math.random() * 2 + 3,
+            accuracy: Math.random() * 2 + 3,
+            communication: Math.random() * 2 + 3,
+          },
+        },
+        ngoProfile: null,
+        volunteerProfile: null,
+        createdAt: new Date(),
+        lastLogin: null,
+      };
+      this.users.set(id, user);
+      return { ...user, id };
+    });
+
+    // ===== NGOs =====
+    const ngos = [
+      {
+        email: 'ngo1@foodrescue.test',
+        fullName: 'City Food Bank',
+        phone: '555-1001',
+        orgName: 'City Food Bank',
+        city: 'New York',
+        coordinates: [40.7489, -73.9680] as [number, number],
+      },
+      {
+        email: 'ngo2@foodrescue.test',
+        fullName: 'Community Outreach',
+        phone: '555-1002',
+        orgName: 'Community Outreach',
+        city: 'Brooklyn',
+        coordinates: [40.6501, -73.9496] as [number, number],
+      },
+      {
+        email: 'ngo3@foodrescue.test',
+        fullName: 'Hope for All',
+        phone: '555-1003',
+        orgName: 'Hope for All',
+        city: 'Queens',
+        coordinates: [40.7282, -73.7949] as [number, number],
+      },
+    ];
+
+    const ngoUsers = ngos.map(n => {
+      const id = randomUUID();
+      const user: User = {
+        id,
+        fullName: n.fullName,
+        email: n.email,
+        password: testPassword,
+        role: 'ngo',
+        phone: n.phone,
+        isVerified: true,
+        isActive: true,
+        donorProfile: null,
+        ngoProfile: {
+          organizationName: n.orgName,
+          registrationNumber: `NGO-${Math.random().toString(36).substring(7).toUpperCase()}`,
+          address: {
+            street: `${Math.floor(Math.random() * 900) + 100} Charity Lane`,
+            city: n.city,
+            state: 'NY',
+            pincode: `1000${Math.floor(Math.random() * 10)}`,
+            coordinates: n.coordinates,
+          },
+          capacity: Math.floor(Math.random() * 1000) + 500,
+          acceptedCategories: ['Cooked Meals', 'Bakery', 'Vegetables', 'Fruits', 'Packaged Food'],
+        },
+        volunteerProfile: null,
+        createdAt: new Date(),
+        lastLogin: null,
+      };
+      this.users.set(id, user);
+      return { ...user, id };
+    });
+
+    // ===== VOLUNTEERS =====
+    const volunteers = [
+      {
+        email: 'volunteer1@foodrescue.test',
+        fullName: 'John Driver',
+        phone: '555-2001',
+        vehicle: 'Motorcycle',
+      },
+      {
+        email: 'volunteer2@foodrescue.test',
+        fullName: 'Sarah Delivery',
+        phone: '555-2002',
+        vehicle: 'Car',
+      },
+      {
+        email: 'volunteer3@foodrescue.test',
+        fullName: 'Mike Express',
+        phone: '555-2003',
+        vehicle: 'Van',
+      },
+      {
+        email: 'volunteer4@foodrescue.test',
+        fullName: 'Emma Swift',
+        phone: '555-2004',
+        vehicle: 'Bicycle',
+      },
+    ];
+
+    const volunteerUsers = volunteers.map(v => {
+      const id = randomUUID();
+      const user: User = {
+        id,
+        fullName: v.fullName,
+        email: v.email,
+        password: testPassword,
+        role: 'volunteer',
+        phone: v.phone,
+        isVerified: true,
+        isActive: true,
+        donorProfile: null,
+        ngoProfile: null,
+        volunteerProfile: {
+          vehicleType: v.vehicle,
+          availability: ['Morning', 'Afternoon', 'Evening'],
+          currentLocation: { coordinates: [40.7128 + Math.random() * 0.1, -74.0060 + Math.random() * 0.1] },
+          completedTasks: Math.floor(Math.random() * 30),
+        },
+        createdAt: new Date(),
+        lastLogin: null,
+      };
+      this.users.set(id, user);
+      return { ...user, id };
+    });
+
+    // ===== ADMIN =====
     const adminId = randomUUID();
     const admin: User = {
       id: adminId,
@@ -79,7 +265,7 @@ export class MemStorage implements IStorage {
       email: 'admin@foodrescue.com',
       password: adminPassword,
       role: 'admin',
-      phone: '1234567890',
+      phone: '555-9999',
       isVerified: true,
       isActive: true,
       donorProfile: null,
@@ -90,94 +276,54 @@ export class MemStorage implements IStorage {
     };
     this.users.set(adminId, admin);
 
-    // Donor User (Restaurant)
-    const donorPassword = await bcrypt.hash('password123', 10);
-    const donorId = randomUUID();
-    const donor: User = {
-      id: donorId,
-      fullName: 'Pizza Palace',
-      email: 'donor@foodrescue.com',
-      password: donorPassword,
-      role: 'donor',
-      phone: '9876543210',
-      isVerified: true,
-      isActive: true,
-      donorProfile: {
-        businessName: 'Pizza Palace Restaurant',
-        businessType: 'Restaurant',
-        address: {
-          street: '123 Main Street',
-          city: 'New York',
-          state: 'NY',
-          pincode: '10001',
-          coordinates: [40.7128, -74.0060],
-        },
-      },
-      ngoProfile: null,
-      volunteerProfile: null,
-      createdAt: new Date(),
-      lastLogin: null,
-    };
-    this.users.set(donorId, donor);
+    // ===== SAMPLE DONATIONS =====
+    const expiryHours = [2, 4, 8, 12, 24];
+    for (let i = 0; i < 5; i++) {
+      const donor = donorUsers[i % donorUsers.length];
+      const expiryTime = new Date(Date.now() + expiryHours[i] * 3600000).toISOString();
+      const id = randomUUID();
+      const donationId = `DN-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${String(i + 1).padStart(4, '0')}`;
 
-    // NGO User
-    const ngoPassword = await bcrypt.hash('password123', 10);
-    const ngoId = randomUUID();
-    const ngo: User = {
-      id: ngoId,
-      fullName: 'Hope Foundation',
-      email: 'ngo@foodrescue.com',
-      password: ngoPassword,
-      role: 'ngo',
-      phone: '9123456789',
-      isVerified: true,
-      isActive: true,
-      donorProfile: null,
-      ngoProfile: {
-        organizationName: 'Hope Foundation',
-        registrationNumber: 'NGO-2024-001',
-        address: {
-          street: '456 Charity Avenue',
-          city: 'New York',
-          state: 'NY',
-          pincode: '10002',
-          coordinates: [40.7150, -73.9960],
+      const donation: Donation = {
+        id,
+        donationId,
+        donorId: donor.id,
+        foodDetails: {
+          category: ['Cooked Meals', 'Bakery', 'Vegetables', 'Fruits', 'Packaged Food'][i],
+          name: ['Pizza', 'Bread', 'Vegetables Mix', 'Fresh Apples', 'Canned Goods'][i],
+          quantity: Math.floor(Math.random() * 20) + 5,
+          unit: 'kg',
+          preparationTime: new Date().toISOString(),
+          expiryTime,
+          dietaryInfo: [],
+          specialInstructions: 'Handle with care',
+          images: [],
         },
-        capacity: 500,
-        acceptedCategories: ['Cooked Meals', 'Bakery', 'Vegetables', 'Fruits'],
-      },
-      volunteerProfile: null,
-      createdAt: new Date(),
-      lastLogin: null,
-    };
-    this.users.set(ngoId, ngo);
-
-    // Volunteer User
-    const volunteerPassword = await bcrypt.hash('password123', 10);
-    const volunteerId = randomUUID();
-    const volunteer: User = {
-      id: volunteerId,
-      fullName: 'John Delivery',
-      email: 'volunteer@foodrescue.com',
-      password: volunteerPassword,
-      role: 'volunteer',
-      phone: '8765432109',
-      isVerified: true,
-      isActive: true,
-      donorProfile: null,
-      ngoProfile: null,
-      volunteerProfile: {
-        vehicleType: 'Motorcycle',
-        availability: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        currentLocation: {
-          coordinates: [40.7140, -74.0050],
+        location: {
+          address: {
+            street: donor.donorProfile?.address.street || '123 Main',
+            city: donor.donorProfile?.address.city || 'NY',
+            state: 'NY',
+            pincode: donor.donorProfile?.address.pincode || '10001',
+          },
+          coordinates: donor.donorProfile?.address.coordinates || [40.7128, -74.0060],
         },
-        completedTasks: 0,
-      },
-      createdAt: new Date(),
-      lastLogin: null,
-    };
-    this.users.set(volunteerId, volunteer);
+        urgencyScore: null,
+        urgencyCategory: expiryHours[i] < 4 ? 'high' : expiryHours[i] < 12 ? 'medium' : 'low',
+        status: 'pending',
+        matchedNGOId: null,
+        assignedVolunteerId: null,
+        timeline: [{
+          status: 'pending',
+          timestamp: new Date().toISOString(),
+          note: 'Donation created',
+        }],
+        cancellationReason: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.donations.set(id, donation);
+    }
   }
 
   // Users
