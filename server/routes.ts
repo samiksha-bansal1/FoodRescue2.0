@@ -213,6 +213,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         relatedUserId: user.id,
       });
 
+      // Emit Socket.IO event to donor for real-time update
+      const io = (app as any).io;
+      if (io) {
+        io.to(`user_${donation.donorId}`).emit('donation_accepted', {
+          donationId: donation.id,
+          message: 'Your donation has been accepted!',
+          ngoName,
+        });
+      }
+
       // Find available volunteer and create task
       const volunteers = allUsers.filter(u => u.role === 'volunteer' && u.isVerified);
       
@@ -265,7 +275,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         // Emit Socket.IO event to notify volunteer in real-time
-        const io = (app as any).io;
         if (io) {
           io.to(`user_${volunteer.id}`).emit('task_assigned', {
             taskId: task.id,

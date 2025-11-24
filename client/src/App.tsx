@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
@@ -151,6 +152,11 @@ function Router() {
   );
 }
 
+function AppContent() {
+  useRealtimeUpdates();
+  return <Router />;
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -158,7 +164,7 @@ export default function App() {
         <AuthProvider>
           <NotificationProvider>
             <Toaster />
-            <Router />
+            <AppContent />
           </NotificationProvider>
         </AuthProvider>
       </TooltipProvider>
