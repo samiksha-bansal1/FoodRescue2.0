@@ -6,11 +6,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { useAuth } from '@/contexts/AuthContext';
 import { foodCategories } from '@shared/schema';
 import { queryClient } from '@/lib/queryClient';
+import { AlertCircle, Zap } from 'lucide-react';
 
 interface DonationUploadModalProps {
   open: boolean;
@@ -101,6 +103,20 @@ export function DonationUploadModal({ open, onOpenChange }: DonationUploadModalP
   };
 
   const dietaryOptions = ['Vegetarian', 'Vegan', 'Contains Nuts', 'Gluten-free', 'Dairy-free'];
+
+  // Calculate urgency score
+  const calculateUrgency = (expiryTime: string) => {
+    if (!expiryTime) return null;
+    const now = new Date();
+    const expiry = new Date(expiryTime);
+    const hoursLeft = (expiry.getTime() - now.getTime()) / (1000 * 60 * 60);
+    
+    if (hoursLeft < 4) return { level: 'high', label: 'HIGH URGENCY - Critical', color: 'bg-red-500', icon: AlertCircle };
+    if (hoursLeft < 12) return { level: 'medium', label: 'MEDIUM URGENCY', color: 'bg-yellow-500', icon: Zap };
+    return { level: 'low', label: 'Low Urgency', color: 'bg-green-500', icon: Zap };
+  };
+
+  const urgency = calculateUrgency(formData.expiryTime);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -201,6 +217,16 @@ export function DonationUploadModal({ open, onOpenChange }: DonationUploadModalP
                 required
                 data-testid="input-expiry-time"
               />
+              {urgency && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge className={`${urgency.color} text-white`} data-testid="badge-urgency">
+                    {urgency.label}
+                  </Badge>
+                  {urgency.level === 'high' && (
+                    <span className="text-xs text-red-600 font-medium">NGOs prioritize high-urgency donations</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
