@@ -625,6 +625,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Rating must be between 1 and 5' });
       }
 
+      // Check if rating already exists for this donation by this NGO
+      const existingRating = await storage.getRatingByDonationAndRater(donationId, user.id);
+      if (existingRating) {
+        return res.status(400).json({ error: 'You have already rated this donation' });
+      }
+
       const createdRating = await storage.createRating({
         donationId,
         ratedTo: donorId,

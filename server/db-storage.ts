@@ -481,6 +481,13 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(ratings).where(eq(ratings.donationId, donationId));
   }
 
+  async getRatingByDonationAndRater(donationId: string, ratedBy: string): Promise<Rating | undefined> {
+    const result = await db.select().from(ratings).where(
+      and(eq(ratings.donationId, donationId), eq(ratings.ratedBy, ratedBy))
+    );
+    return result[0];
+  }
+
   // Notifications
   async createNotification(notification: InsertNotification): Promise<Notification> {
     const result = await db.insert(notifications).values(notification as any).returning();
