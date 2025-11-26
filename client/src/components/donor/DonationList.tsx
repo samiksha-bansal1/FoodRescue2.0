@@ -16,7 +16,9 @@ export function DonationList() {
   const [expandedDonationId, setExpandedDonationId] = useState<string | null>(null);
   
   const { data: donations, isLoading } = useQuery<Donation[]>({
-    queryKey: ['/api/donations', user?.id],
+    queryKey: ['/api/donations'],
+    staleTime: 0,
+    gcTime: 0,
   });
 
   if (isLoading) {

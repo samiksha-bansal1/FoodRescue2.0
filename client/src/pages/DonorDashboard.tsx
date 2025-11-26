@@ -14,7 +14,9 @@ export default function DonorDashboard() {
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   const { data: donations = [] } = useQuery<Donation[]>({
-    queryKey: ['/api/donations', user?.id],
+    queryKey: ['/api/donations'],
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const stats = useMemo(() => {
