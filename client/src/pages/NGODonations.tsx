@@ -1,20 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { Package, MapPin, Star, CheckCircle } from 'lucide-react';
+import { Package, MapPin, Star, CheckCircle, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import type { Donation } from '@shared/schema';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { RatingModal } from '@/components/ngo/RatingModal';
 import { CompletionBar } from '@/components/shared/CompletionBar';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 
 export default function NGODonations() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [ratingModal, setRatingModal] = useState<{
     open: boolean;
     donationId?: string;
@@ -37,6 +40,27 @@ export default function NGODonations() {
   const getDonor = (donorId: string) => {
     return allUsers.find((u: any) => u.id === donorId);
   };
+
+  const acceptRideMutation = useMutation({
+    mutationFn: async (donationId: string) => {
+      return apiRequest('PATCH', `/api/donations/${donationId}/accept-ride`, {});
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Ride accepted!',
+        description: 'Volunteers will be notified about this pickup.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/donations'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Failed to accept ride',
+        description: error instanceof Error ? error.message : 'Please try again',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const handleRateDonor = (donation: Donation) => {
     const donor = getDonor(donation.donorId);
@@ -77,7 +101,9 @@ export default function NGODonations() {
         <div className="grid grid-cols-1 gap-4">
           {donations.map((donation, index) => {
             const isDelivered = donation.status === 'delivered';
+            const isMatched = donation.status === 'matched';
             const canRate = isDelivered && donation.completionPercentage === 100;
+            const canAcceptRide = isMatched && donation.completionPercentage === 50;
 
             return (
               <motion.div
@@ -135,6 +161,23 @@ export default function NGODonations() {
                           percentage={donation.completionPercentage || 0} 
                           status={donation.status}
                         />
+                        {canAcceptRide && (
+                          <Button
+                            onClick={() => acceptRideMutation.mutate(donation.id)}
+                            disabled={acceptRideMutation.isPending}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                            data-testid="button-accept-ride"
+                          >
+                            {acceptRideMutation.isPending ? (
+                              <LoadingSpinner size="sm" />
+                            ) : (
+                              <>
+                                <Truck className="w-4 h-4 mr-2" />
+                                Accept & Assign Pickup
+                              </>
+                            )}
+                          </Button>
+                        )}
                         {canRate && (
                           <Button
                             onClick={() => handleRateDonor(donation)}
