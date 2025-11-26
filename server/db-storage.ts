@@ -477,6 +477,10 @@ export class DatabaseStorage implements IStorage {
     return result[0];
   }
 
+  async getAllRatings(): Promise<Rating[]> {
+    return db.select().from(ratings);
+  }
+
   async getRatingsByDonation(donationId: string): Promise<Rating[]> {
     return db.select().from(ratings).where(eq(ratings.donationId, donationId));
   }

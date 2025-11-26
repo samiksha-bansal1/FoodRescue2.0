@@ -41,6 +41,7 @@ export interface IStorage {
 
   // Ratings
   createRating(rating: InsertRating): Promise<Rating>;
+  getAllRatings(): Promise<Rating[]>;
   getRatingsByDonation(donationId: string): Promise<Rating[]>;
 
   // Notifications
@@ -547,6 +548,10 @@ export class MemStorage implements IStorage {
     };
     this.ratings.set(id, rating);
     return rating;
+  }
+
+  async getAllRatings(): Promise<Rating[]> {
+    return Array.from(this.ratings.values());
   }
 
   async getRatingsByDonation(donationId: string): Promise<Rating[]> {

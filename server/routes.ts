@@ -675,7 +675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/ratings", authenticateToken, async (req, res) => {
     try {
-      const allRatings = await db.select().from(ratings);
+      const allRatings = await storage.getAllRatings();
       res.json(allRatings);
     } catch (error) {
       console.error('Get ratings error:', error);
