@@ -9,12 +9,14 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Donation } from '@shared/schema';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function DonationList() {
+  const { user } = useAuth();
   const [expandedDonationId, setExpandedDonationId] = useState<string | null>(null);
   
   const { data: donations, isLoading } = useQuery<Donation[]>({
-    queryKey: ['/api/donations'],
+    queryKey: ['/api/donations', user?.id],
   });
 
   if (isLoading) {
