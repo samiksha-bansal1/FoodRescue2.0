@@ -219,6 +219,67 @@ export class DatabaseStorage implements IStorage {
         volunteerProfile: null,
       });
 
+      // Seed sample donations to demonstrate workflow
+      const allUsers = await this.getAllUsers();
+      const donor = allUsers.find(u => u.role === 'donor' && u.email === 'donor1@foodrescue.test');
+      const ngo = allUsers.find(u => u.role === 'ngo' && u.email === 'ngo1@foodrescue.test');
+
+      if (donor && ngo) {
+        // Pending donation
+        await db.insert(donations).values({
+          id: randomUUID(),
+          donorId: donor.id,
+          matchedNGOId: null,
+          assignedVolunteerId: null,
+          foodDetails: {
+            name: 'Fresh Pasta & Sauce',
+            category: 'Cooked Meals',
+            quantity: 10,
+            unit: 'kg',
+            dietaryInfo: ['Vegetarian'],
+            specialInstructions: 'Keep refrigerated',
+            preparationTime: new Date(Date.now() - 30 * 60000).toISOString(),
+            expiryTime: new Date(Date.now() + 2 * 60 * 60000).toISOString(),
+            images: [],
+          },
+          location: {
+            address: { street: '123 Main Street', city: 'New York', state: 'NY', pincode: '10001' },
+            coordinates: [40.7128, -74.0060],
+          },
+          status: 'pending',
+          completionPercentage: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        // Accepted (50%) - NGO accepted, waiting for ride
+        await db.insert(donations).values({
+          id: randomUUID(),
+          donorId: donor.id,
+          matchedNGOId: ngo.id,
+          assignedVolunteerId: null,
+          foodDetails: {
+            name: 'Bakery Items',
+            category: 'Bakery',
+            quantity: 5,
+            unit: 'kg',
+            dietaryInfo: ['Contains Nuts'],
+            specialInstructions: 'Handle with care',
+            preparationTime: new Date(Date.now() - 60 * 60000).toISOString(),
+            expiryTime: new Date(Date.now() + 1 * 60 * 60000).toISOString(),
+            images: [],
+          },
+          location: {
+            address: { street: '123 Main Street', city: 'New York', state: 'NY', pincode: '10001' },
+            coordinates: [40.7128, -74.0060],
+          },
+          status: 'matched',
+          completionPercentage: 50,
+          createdAt: new Date(Date.now() - 5 * 60000),
+          updatedAt: new Date(Date.now() - 5 * 60000),
+        });
+      }
+
       this.seeded = true;
     } catch (error) {
       console.error('Failed to seed database:', error);

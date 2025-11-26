@@ -291,6 +291,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Accept Ride - NGO initiates pickup
+  app.patch("/api/donations/:id/accept-ride", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+
+      if (user.role !== 'ngo') {
+        return res.status(403).json({ error: 'Only NGOs can accept rides' });
+      }
+
+      const donation = await storage.getDonation(id);
+      if (!donation) {
+        return res.status(404).json({ error: 'Donation not found' });
+      }
+
+      if (donation.status !== 'matched' || donation.completionPercentage !== 50) {
+        return res.status(400).json({ error: 'Donation is not ready for ride assignment' });
+      }
+
+      const allUsers = await storage.getAllUsers();
+      const volunteers = allUsers.filter(u => u.role === 'volunteer' && u.isVerified);
+      
+      if (volunteers.length === 0) {
+        return res.status(400).json({ error: 'No available volunteers' });
+      }
+
+      const volunteer = volunteers[0];
+      const pickupAddr = donation.location?.address || { street: 'Location', city: 'Unknown', state: '', pincode: '' };
+      const pickupLocation = {
+        address: `${pickupAddr.street}, ${pickupAddr.city}`,
+        coordinates: donation.location?.coordinates || [0, 0],
+      };
+
+      const ngoUser = allUsers.find(u => u.id === user.id);
+      const deliveryAddr = ngoUser?.ngoProfile?.address || { street: 'NGO Location', city: 'City', state: '', pincode: '' };
+      const deliveryLocation = {
+        address: `${deliveryAddr.street}, ${deliveryAddr.city}`,
+        coordinates: ngoUser?.ngoProfile?.address?.coordinates || [0, 0],
+      };
+
+      const task = await storage.createTask({
+        donationId: donation.id,
+        volunteerId: volunteer.id,
+        donorId: donation.donorId,
+        ngoId: user.id,
+        status: 'pending',
+        pickupLocation,
+        deliveryLocation,
+        estimatedTime: 30,
+      });
+
+      // Update donation to show task is assigned (still 50% but task exists)
+      const updatedDonation = await storage.updateDonation(id, {
+        assignedVolunteerId: volunteer.id,
+        status: 'matched',
+      });
+
+      // Notify volunteer
+      const pickupText = `${pickupAddr.street}, ${pickupAddr.city}`;
+      const deliveryText = `${deliveryAddr.street}, ${deliveryAddr.city}`;
+
+      await storage.createNotification({
+        recipientId: volunteer.id,
+        type: 'task_assigned',
+        title: 'New Delivery Task',
+        message: `Pick up ${donation.foodDetails.name} from ${pickupText} and deliver to ${user.ngoProfile?.organizationName || 'the NGO'} at ${deliveryText}`,
+        relatedDonationId: donation.id,
+        relatedUserId: null,
+      });
+
+      // Emit Socket.IO event
+      const io = (app as any).io;
+      if (io) {
+        io.to(`user_${volunteer.id}`).emit('task_assigned', {
+          taskId: task.id,
+          donationId: donation.id,
+          message: 'New delivery task assigned to you',
+        });
+      }
+
+      res.json(updatedDonation);
+    } catch (error) {
+      console.error('Accept ride error:', error);
+      res.status(500).json({ error: 'Failed to accept ride' });
+    }
+  });
+
   // Task Routes
   app.get("/api/tasks", authenticateToken, async (req, res) => {
     try {
