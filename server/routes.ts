@@ -624,8 +624,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const createdRating = await storage.createRating({
         donationId,
-        donorId,
+        ratedTo: donorId,
         ratedBy: user.id,
+        ratedType: 'ngo',
         rating,
         comment: comment || '',
       });
