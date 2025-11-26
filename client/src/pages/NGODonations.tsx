@@ -212,7 +212,7 @@ export default function NGODonations() {
                             ) : (
                               <>
                                 <CheckCircle className="w-4 h-4 mr-2" />
-                                Mark as Delivered
+                                Mark Donation as Delivered
                               </>
                             )}
                           </Button>
@@ -224,7 +224,7 @@ export default function NGODonations() {
                             data-testid="button-rate-donor"
                           >
                             <Star className="w-4 h-4 mr-2" />
-                            Rate This Donor
+                            Leave Feedback & Rate
                           </Button>
                         )}
                         {isDelivered && !canRate && (

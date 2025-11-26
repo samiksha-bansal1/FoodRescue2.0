@@ -210,7 +210,7 @@ export function TaskList() {
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-primary" />
                             <span className="text-sm font-medium">
-                              {typeof task.pickupLocation === 'object' && task.pickupLocation?.address ? task.pickupLocation.address : 'Location'}
+                              {donation?.location?.address ? `${donation.location.address.street}, ${donation.location.address.city}` : 'Location'}
                             </span>
                           </div>
                         </div>
@@ -220,54 +220,58 @@ export function TaskList() {
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-green-600" />
                             <span className="text-sm font-medium">
-                              {typeof task.deliveryLocation === 'object' && task.deliveryLocation?.address ? task.deliveryLocation.address : 'NGO Location'}
+                              {task?.deliveryLocation?.address ? task.deliveryLocation.address : 'NGO Location'}
                             </span>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 pt-2 border-t">
-                          <div>
-                            <p className="text-xs text-muted-foreground">Distance</p>
-                            <p className="font-semibold">{task.distance || 'N/A'} km</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground">Est. Delivery Time</p>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              <p className="font-semibold">{task.estimatedTime || 0} min</p>
+                        {task && (
+                          <div className="grid grid-cols-2 gap-4 pt-2 border-t">
+                            <div>
+                              <p className="text-xs text-muted-foreground">Distance</p>
+                              <p className="font-semibold">{task.distance || 'N/A'} km</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Est. Delivery Time</p>
+                              <div className="flex items-center gap-1">
+                                <Clock className="w-4 h-4" />
+                                <p className="font-semibold">{task.estimatedTime || 0} min</p>
+                              </div>
                             </div>
                           </div>
+                        )}
+                      </div>
+
+                      {task && (
+                        <div className="flex gap-2 mb-4">
+                          <Button
+                            onClick={() => handleAcceptTask(task.id)}
+                            className="flex-1"
+                            data-testid="button-accept-task"
+                          >
+                            Accept Task
+                          </Button>
+                          <Button
+                            onClick={() => handleRejectTask(task.id)}
+                            variant="outline"
+                            className="flex-1"
+                            data-testid="button-reject-task"
+                          >
+                            Reject
+                          </Button>
+                          <Button
+                            onClick={() => setExpandedTaskId(expandedTaskId === task.id ? null : task.id)}
+                            variant="outline"
+                            size="icon"
+                            data-testid="button-view-map"
+                            title="View route map"
+                          >
+                            <Map className="w-4 h-4" />
+                          </Button>
                         </div>
-                      </div>
+                      )}
 
-                      <div className="flex gap-2 mb-4">
-                        <Button
-                          onClick={() => handleAcceptTask(task.id)}
-                          className="flex-1"
-                          data-testid="button-accept-task"
-                        >
-                          Accept Task
-                        </Button>
-                        <Button
-                          onClick={() => handleRejectTask(task.id)}
-                          variant="outline"
-                          className="flex-1"
-                          data-testid="button-reject-task"
-                        >
-                          Reject
-                        </Button>
-                        <Button
-                          onClick={() => setExpandedTaskId(expandedTaskId === task.id ? null : task.id)}
-                          variant="outline"
-                          size="icon"
-                          data-testid="button-view-map"
-                          title="View route map"
-                        >
-                          <Map className="w-4 h-4" />
-                        </Button>
-                      </div>
-
-                      {task.status === 'accepted' && (
+                      {task && task.status === 'accepted' && (
                         <Button
                           onClick={() => handleMarkDelivered(task.id, donation)}
                           className="w-full bg-green-600 hover:bg-green-700"
@@ -278,7 +282,7 @@ export function TaskList() {
                         </Button>
                       )}
 
-                      {expandedTaskId === task.id && (
+                      {task && expandedTaskId === task.id && (
                         <div className="mt-4 pt-4 border-t">
                           <TaskLocationMap task={task} />
                         </div>
