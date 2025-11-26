@@ -8,6 +8,7 @@ interface DonorRatingDisplayProps {
 export function DonorRatingDisplay({ donor }: DonorRatingDisplayProps) {
   const rating = donor?.donorProfile?.rating || 0;
   const totalRatings = donor?.donorProfile?.totalRatings || 0;
+  const isNewDonor = totalRatings === 0;
   const ratingBreakdown = donor?.donorProfile?.ratingBreakdown || {
     foodQuality: 0,
     packaging: 0,
@@ -15,9 +16,10 @@ export function DonorRatingDisplay({ donor }: DonorRatingDisplayProps) {
     communication: 0,
   };
 
-  const ratingPercentage = (rating / 10) * 100;
+  const ratingPercentage = isNewDonor ? 0 : (rating / 10) * 100;
 
   const getStarColor = (rating: number) => {
+    if (isNewDonor) return 'text-blue-600 dark:text-blue-400';
     if (rating >= 8) return 'text-emerald-600 dark:text-emerald-400';
     if (rating >= 6) return 'text-yellow-600 dark:text-yellow-400';
     if (rating >= 4) return 'text-orange-600 dark:text-orange-400';
@@ -25,6 +27,7 @@ export function DonorRatingDisplay({ donor }: DonorRatingDisplayProps) {
   };
 
   const getQualityText = (rating: number) => {
+    if (isNewDonor) return 'New Donor';
     if (rating >= 8) return 'Excellent';
     if (rating >= 6) return 'Good';
     if (rating >= 4) return 'Average';
@@ -36,20 +39,20 @@ export function DonorRatingDisplay({ donor }: DonorRatingDisplayProps) {
       <div className="flex items-center gap-4 mb-4">
         <div className="text-center">
           <div className={`text-4xl font-bold ${getStarColor(rating)}`}>
-            {rating.toFixed(1)}
+            {isNewDonor ? 'NEW' : rating.toFixed(1)}
           </div>
           <div className="flex items-center justify-center mt-2">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 className={`w-4 h-4 ${
-                  i < Math.round(rating / 2) ? getStarColor(rating) : 'text-muted-foreground'
-                } ${i < Math.round(rating / 2) ? 'fill-current' : ''}`}
+                  isNewDonor ? 'text-blue-300' : (i < Math.round(rating / 2) ? getStarColor(rating) : 'text-muted-foreground')
+                } ${isNewDonor || i < Math.round(rating / 2) ? 'fill-current' : ''}`}
               />
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            {totalRatings} {totalRatings === 1 ? 'rating' : 'ratings'}
+            {isNewDonor ? 'New to platform' : `${totalRatings} ${totalRatings === 1 ? 'rating' : 'ratings'}`}
           </p>
         </div>
 
