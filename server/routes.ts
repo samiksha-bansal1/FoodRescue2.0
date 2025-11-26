@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { storage } from "./storage";
@@ -8,8 +8,16 @@ import express from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "foodrescue-secret-key-change-in-production";
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: string; email: string; role: string };
+    }
+  }
+}
+
 // Middleware to verify JWT token
-function authenticateToken(req: any, res: any, next: any) {
+function authenticateToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -126,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Ensure each donation has donor information attached
       const withDonors = donations.map(d => ({
         ...d,
-        donor: d.donor || {
+        donor: {
           id: d.donorId,
           fullName: 'Unknown Donor',
           donorProfile: { rating: 0, totalRatings: 0, ratingBreakdown: { foodQuality: 0, packaging: 0, accuracy: 0, communication: 0 } }
@@ -244,10 +252,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         const task = await storage.createTask({
+          taskId: `task_${Date.now()}`,
           donationId: donation.id,
           volunteerId: volunteer.id,
           donorId: donation.donorId,
           ngoId: user.id,
+          status: 'assigned',
           pickupLocation,
           deliveryLocation,
           distance: '5.2',
@@ -332,11 +342,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const task = await storage.createTask({
+        taskId: `task_${Date.now()}`,
         donationId: donation.id,
         volunteerId: volunteer.id,
         donorId: donation.donorId,
         ngoId: user.id,
-        status: 'pending',
+        status: 'assigned',
         pickupLocation,
         deliveryLocation,
         estimatedTime: 30,
