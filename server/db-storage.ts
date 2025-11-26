@@ -234,12 +234,12 @@ export class DatabaseStorage implements IStorage {
         const vol1 = volunteers[0];
         const vol2 = volunteers[1];
 
-        // 0% - Pending donation waiting for NGO to accept
+        // 75% - Pending delivery (volunteer accepted, ready for NGO to mark delivered)
         await db.insert(donations).values({
           id: randomUUID(),
           donorId: donor1.id,
-          matchedNGOId: null,
-          assignedVolunteerId: null,
+          matchedNGOId: ngo1.id,
+          assignedVolunteerId: vol1.id,
           foodDetails: {
             name: 'Fresh Pasta & Sauce',
             category: 'Cooked Meals',
@@ -255,18 +255,18 @@ export class DatabaseStorage implements IStorage {
             address: { street: '123 Main Street', city: 'New York', state: 'NY', pincode: '10001' },
             coordinates: [40.7128, -74.0060],
           },
-          status: 'pending',
-          completionPercentage: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          status: 'accepted',
+          completionPercentage: 75,
+          createdAt: new Date(Date.now() - 15 * 60000),
+          updatedAt: new Date(Date.now() - 10 * 60000),
         });
 
-        // 50% - NGO accepted, waiting to assign pickup
+        // 75% - Another pending delivery
         await db.insert(donations).values({
           id: randomUUID(),
           donorId: donor2.id,
-          matchedNGOId: ngo1.id,
-          assignedVolunteerId: null,
+          matchedNGOId: ngo2.id,
+          assignedVolunteerId: vol2.id,
           foodDetails: {
             name: 'Bakery Items',
             category: 'Bakery',
@@ -282,18 +282,18 @@ export class DatabaseStorage implements IStorage {
             address: { street: '456 Park Ave', city: 'Brooklyn', state: 'NY', pincode: '11201' },
             coordinates: [40.6782, -73.9442],
           },
-          status: 'matched',
-          completionPercentage: 50,
-          createdAt: new Date(Date.now() - 5 * 60000),
-          updatedAt: new Date(Date.now() - 5 * 60000),
+          status: 'accepted',
+          completionPercentage: 75,
+          createdAt: new Date(Date.now() - 12 * 60000),
+          updatedAt: new Date(Date.now() - 8 * 60000),
         });
 
-        // 75% - Volunteer accepted, now NGO can mark delivered
+        // 100% - Delivered and ready for NGO to rate
         await db.insert(donations).values({
           id: randomUUID(),
-          donorId: donor1.id,
-          matchedNGOId: ngo2.id,
-          assignedVolunteerId: vol1.id,
+          donorId: donor3.id,
+          matchedNGOId: ngo1.id,
+          assignedVolunteerId: volunteers[3]?.id || volunteers[0].id,
           foodDetails: {
             name: 'Vegetable Box',
             category: 'Vegetables',
@@ -309,18 +309,18 @@ export class DatabaseStorage implements IStorage {
             address: { street: '789 Queens Blvd', city: 'Queens', state: 'NY', pincode: '11375' },
             coordinates: [40.7282, -73.7949],
           },
-          status: 'accepted',
-          completionPercentage: 75,
-          createdAt: new Date(Date.now() - 15 * 60000),
+          status: 'delivered',
+          completionPercentage: 100,
+          createdAt: new Date(Date.now() - 25 * 60000),
           updatedAt: new Date(Date.now() - 5 * 60000),
         });
 
-        // 100% - Delivered and ready for NGO to rate
+        // 100% - Another delivered donation
         await db.insert(donations).values({
           id: randomUUID(),
-          donorId: donor3.id,
-          matchedNGOId: ngo1.id,
-          assignedVolunteerId: vol2.id,
+          donorId: donor1.id,
+          matchedNGOId: ngo2.id,
+          assignedVolunteerId: vol1.id,
           foodDetails: {
             name: 'Fruit Assortment',
             category: 'Fruits',
@@ -338,8 +338,8 @@ export class DatabaseStorage implements IStorage {
           },
           status: 'delivered',
           completionPercentage: 100,
-          createdAt: new Date(Date.now() - 25 * 60000),
-          updatedAt: new Date(Date.now() - 5 * 60000),
+          createdAt: new Date(Date.now() - 30 * 60000),
+          updatedAt: new Date(Date.now() - 6 * 60000),
         });
       }
 
