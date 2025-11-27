@@ -10,7 +10,7 @@ export function initializeSocket(userId: string) {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const host = window.location.host;
   
-  socket = io(`${window.location.protocol}//${host}`, {
+  socket = io(`${protocol}//${host}`, {
     transports: ['websocket', 'polling'],
   });
 

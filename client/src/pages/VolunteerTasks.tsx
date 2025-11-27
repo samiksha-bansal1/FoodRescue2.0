@@ -23,7 +23,9 @@ export default function VolunteerTasks() {
   useEffect(() => {
     if (!user?.id) return;
 
-    const socket = io();
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host;
+    const socket = io(`${protocol}//${host}`);
 
     socket.on('connect', () => {
       socket.emit('join_room', user.id);

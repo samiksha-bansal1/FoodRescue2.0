@@ -45,6 +45,7 @@ export function RatingModal({
         description: `You rated ${donorName} with ${rating} stars.`,
       });
 
+      queryClient.invalidateQueries({ queryKey: ['/api/ratings'] });
       queryClient.invalidateQueries({ queryKey: ['/api/donations'] });
       queryClient.invalidateQueries({ queryKey: ['/api/donations/available'] });
       queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
