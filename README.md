@@ -1,5 +1,7 @@
 # 🌟 FoodRescue
 
+![alt text](image.png)
+
 <div align="center">
 
 ![FoodRescue Banner](https://img.shields.io/badge/Food-Rescue-10B981?style=for-the-badge&logo=leaf&logoColor=white)
@@ -338,16 +340,6 @@ foodrescue/
 - **Database Indexing**: Fast lookups on foreign keys
 - **WebSocket Compression**: Efficient real-time updates
 - **Image Optimization**: Lazy loading & modern formats
-
----
-
-## 🎯 Use Cases
-
-| User Type                    | Key Benefits                                                                                                                   | Main Features                                                                       |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | -------------- |
-| 🏪 **Restaurants & Donors**  | Create donations in under 2 minutes • Track real-time acceptance • Build reputation through ratings • Monitor community impact | Quick donation creation • Notification system • Rating dashboard • Impact analytics |
-| 🏛️ **NGOs & Charities**      | Browse available donations instantly • Check donor credibility • One-click acceptance workflow • Provide quality feedback      | Smart filtering • Donor reputation view • Simple acceptance • Rating submission     |
-| 👷 **Volunteers (Optional)** | Accept delivery tasks • Track completed missions • Contribute to community • Flexible scheduling                               | Task assignment • Completion tracking • Contribution history                        | Flexible hours |
 
 ---
 
