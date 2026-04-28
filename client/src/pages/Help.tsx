@@ -26,8 +26,8 @@ export default function Help() {
       answer: 'Provide the food category, name, quantity, expiry time, dietary information, and any special handling instructions.',
     },
     {
-      question: 'Is there a fee for using FoodRescue?',
-      answer: 'No, FoodRescue is completely free. Our mission is to reduce food waste and help communities.',
+      question: 'Is there a fee for using Annsankalp?',
+      answer: 'No, AnnSankalp is completely free. Our mission is to reduce food waste and help communities.',
     },
   ];
 
@@ -35,7 +35,7 @@ export default function Help() {
     {
       icon: Mail,
       title: 'Email Support',
-      value: 'support@foodrescue.com',
+      value: 'support@annsankalp.com',
       action: 'Coming Soon',
     },
     {

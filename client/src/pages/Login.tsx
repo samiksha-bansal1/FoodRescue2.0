@@ -48,7 +48,6 @@ export default function Login() {
       const dashboardRoutes = {
         donor: '/donor',
         ngo: '/ngo',
-        volunteer: '/volunteer',
         admin: '/admin',
       };
 
@@ -75,14 +74,14 @@ export default function Login() {
           <Link href="/">
             <div className="flex items-center gap-2 mb-8 cursor-pointer hover-elevate">
               <Package className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold">FoodRescue</span>
+              <span className="text-2xl font-bold">AnnSankalp</span>
             </div>
           </Link>
 
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">Welcome back</CardTitle>
-              <CardDescription>Sign in to your FoodRescue account</CardDescription>
+              <CardDescription>Sign in to your AnnSankalp account</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -136,7 +135,7 @@ export default function Login() {
         <div className="max-w-md">
           <h2 className="text-4xl font-bold mb-6">Fighting Hunger, Reducing Waste</h2>
           <p className="text-lg text-white/90">
-            Join our community of donors, NGOs, and volunteers making a real difference in the fight against food waste and hunger.
+            Join our community of donors and NGOs making a real difference in the fight against food waste and hunger.
           </p>
         </div>
       </motion.div>
